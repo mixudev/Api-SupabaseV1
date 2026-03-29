@@ -115,12 +115,17 @@ async function runDecryption() {
     if (!ephB64 || !encB64)
       throw new Error('Ephemeral Public Key and Encrypted Key are required.');
 
-    // In severe-side mode, ephB64 needs to be correctly passed as base64-of-PEM 
-    // consistently with how it was handled before.
+    // Get current session for authentication
+    const { data: { session } } = await sb.auth.getSession();
+    const headers = { 'Content-Type': 'application/json' };
+    
+    if (session) {
+      headers['Authorization'] = `Bearer ${session.access_token}`;
+    }
     
     const response = await fetch('/api/decrypt', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: headers,
       body: JSON.stringify({ 
         ephemeral_pub: ephB64, 
         encrypted_key: encB64 

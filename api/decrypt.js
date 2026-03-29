@@ -1,9 +1,17 @@
+import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
+
+// Initialize Supabase specifically for Auth verification
+// Using Service Key for server-side auth logic
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_KEY
+);
 
 /**
  * api/decrypt.js
  * Performs X25519 ECDH key derivation and XOR decryption server-side.
- * Uses the PRIVATE_KEY environment variable set in Vercel.
+ * Uses the PRIVAT_KEY environment variable set in Vercel.
  */
 export default async function handler(req, res) {
   // CORS Configuration
@@ -19,11 +27,30 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  // Security: Simple API Key check if configured
-  const apiKey = req.headers['x-api-key'];
-  if (process.env.API_SECRET && apiKey !== process.env.API_SECRET) {
-    return res.status(401).json({ error: 'Unauthorized' });
+  // --- AUTHORIZATION LOGIC ---
+  let isAuthorized = false;
+
+  // 1. Check Supabase JWT (Authorization: Bearer <token>)
+  const authHeader = req.headers['authorization'];
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    const token = authHeader.split(' ')[1];
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    if (user && !error) {
+      isAuthorized = true;
+    }
   }
+
+  // 2. Fallback to API Key (x-api-key)
+  const apiKey = req.headers['x-api-key'];
+  if (!isAuthorized && process.env.API_SECRET && apiKey === process.env.API_SECRET) {
+    isAuthorized = true;
+  }
+
+  // 3. Final Check
+  if (!isAuthorized) {
+    return res.status(401).json({ error: 'Unauthorized: Valid Supabase session or API Key required.' });
+  }
+  // ---------------------------
 
   try {
     const { ephemeral_pub, encrypted_key } = req.body;
