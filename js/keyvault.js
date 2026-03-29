@@ -103,67 +103,41 @@ function copyHex() {
     .catch(() => alert('Copy failed — please select and copy manually.'));
 }
 
-// ─── Main decryption routine ─────────────────
+// ─── Main decryption routine (Server-side) ──
 async function runDecryption() {
   document.getElementById('kv-output').classList.add('hidden');
   kvSetLoading(true);
 
   try {
-    if (!window.crypto?.subtle) throw new Error('Web Crypto API not supported in this browser.');
-
-    const privRaw = document.getElementById('kv-privateKey').value.trim();
     const ephB64  = document.getElementById('kv-ephemeralPub').value.trim();
     const encB64  = document.getElementById('kv-encryptedKey').value.trim();
 
-    if (!privRaw || !ephB64 || !encB64)
-      throw new Error('All three fields must be filled in before proceeding.');
+    if (!ephB64 || !encB64)
+      throw new Error('Ephemeral Public Key and Encrypted Key are required.');
 
-    // 1. Import private key (PKCS8 PEM → X25519)
-    let privKey;
-    try {
-      privKey = await crypto.subtle.importKey(
-        'pkcs8', b64ToAB(stripPem(privRaw)),
-        { name: 'X25519' }, false, ['deriveBits']
-      );
-    } catch {
-      throw new Error('Failed to import Private Key. Ensure it is a valid X25519 PKCS8 PEM.');
+    // In severe-side mode, ephB64 needs to be correctly passed as base64-of-PEM 
+    // consistently with how it was handled before.
+    
+    const response = await fetch('/api/decrypt', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        ephemeral_pub: ephB64, 
+        encrypted_key: encB64 
+      })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+      throw new Error(result.error || result.detail || 'Recovery failed.');
     }
 
-    // 2. Import ephemeral public key (Base64-encoded SPKI PEM)
-    const ephPem = new TextDecoder().decode(b64ToAB(ephB64));
-    let pubKey;
-    try {
-      pubKey = await crypto.subtle.importKey(
-        'spki', b64ToAB(stripPem(ephPem)),
-        { name: 'X25519' }, false, []
-      );
-    } catch {
-      throw new Error('Failed to import Ephemeral Public Key. Check the Base64 encoding.');
-    }
-
-    // 3. ECDH key derivation
-    let secret;
-    try {
-      secret = await crypto.subtle.deriveBits({ name: 'X25519', public: pubKey }, privKey, 256);
-    } catch {
-      throw new Error('ECDH derivation failed. Key pair may be mismatched.');
-    }
-
-    // 4. KDF: SHA-256 of shared secret → wrap key
-    const wrapKey = new Uint8Array(await crypto.subtle.digest('SHA-256', secret));
-
-    // 5. XOR unwrap
-    const wrapped = new Uint8Array(b64ToAB(encB64));
-    if (!wrapped.length) throw new Error('Encrypted key is empty or could not be decoded.');
-
-    const aesKey = new Uint8Array(wrapped.length);
-    for (let i = 0; i < wrapped.length; i++) aesKey[i] = wrapped[i] ^ wrapKey[i % wrapKey.length];
-
-    // 6. Clear sensitive inputs from DOM
+    // Clear inputs
     document.getElementById('kv-ephemeralPub').value = '';
     document.getElementById('kv-encryptedKey').value = '';
 
-    kvShowResult(true, toHex(aesKey));
+    kvShowResult(true, result.recovered_hex);
 
   } catch (e) {
     kvShowResult(false, null, e.message);

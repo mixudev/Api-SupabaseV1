@@ -14,7 +14,8 @@
     </h2>
 
     <p class="text-[0.9rem] text-muted leading-[1.75] mb-9">
-      Recover your AES session key using X25519 elliptic-curve Diffie–Hellman. Every operation runs entirely in your browser — nothing is transmitted or stored.
+      Recover your AES session key using X25519 elliptic-curve Diffie–Hellman. 
+      Decryption is processed securely via your <strong>Vercel Private Key</strong> setting.
     </p>
 
     <div class="flex flex-col gap-3 border-t border-border pt-6">
@@ -22,39 +23,32 @@
         <span class="flex-shrink-0 w-[18px] h-[18px] mt-px rounded-full flex items-center justify-center" style="background: rgba(74,222,128,0.08)">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         </span>
-        Private key never leaves your device
+        Private key stored securely in Vercel Environment
       </div>
       <div class="flex items-start gap-3 text-[0.83rem] text-muted leading-[1.5]">
         <span class="flex-shrink-0 w-[18px] h-[18px] mt-px rounded-full flex items-center justify-center" style="background: rgba(74,222,128,0.08)">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         </span>
-        Processed via SubtleCrypto (Web Crypto API)
+        Decryption performed via Serverless Function
       </div>
       <div class="flex items-start gap-3 text-[0.83rem] text-muted leading-[1.5]">
         <span class="flex-shrink-0 w-[18px] h-[18px] mt-px rounded-full flex items-center justify-center" style="background: rgba(74,222,128,0.08)">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         </span>
-        Zero outbound network requests
+        Zero outbound network requests (from your local browser)
       </div>
       <div class="flex items-start gap-3 text-[0.83rem] text-muted leading-[1.5]">
         <span class="flex-shrink-0 w-[18px] h-[18px] mt-px rounded-full flex items-center justify-center" style="background: rgba(74,222,128,0.08)">
           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
         </span>
-        Ephemeral &amp; encrypted key cleared after decryption
-      </div>
-      <div class="flex items-start gap-3 text-[0.83rem] text-muted leading-[1.5]">
-        <span class="flex-shrink-0 w-[18px] h-[18px] mt-px rounded-full flex items-center justify-center" style="background: rgba(74,222,128,0.08)">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        </span>
-        Memory freed on page close
+        AES key recovered instantly
       </div>
     </div>
 
     <div class="flex flex-wrap gap-2 mt-8">
-      <span class="font-mono text-[0.68rem] text-muted bg-surface border border-border px-[10px] py-[3px] rounded">X25519 ECDH</span>
-      <span class="font-mono text-[0.68rem] text-muted bg-surface border border-border px-[10px] py-[3px] rounded">SHA-256 KDF</span>
-      <span class="font-mono text-[0.68rem] text-muted bg-surface border border-border px-[10px] py-[3px] rounded">XOR Unwrap</span>
-      <span class="font-mono text-[0.68rem] text-muted bg-surface border border-border px-[10px] py-[3px] rounded">PKCS8 PEM</span>
+      <span class="font-mono text-[0.68rem] text-muted bg-surface border border-border px-[10px] py-[3px] rounded">X25519</span>
+      <span class="font-mono text-[0.68rem] text-muted bg-surface border border-border px-[10px] py-[3px] rounded">Vercel API</span>
+      <span class="font-mono text-[0.68rem] text-muted bg-surface border border-border px-[10px] py-[3px] rounded">Secure Env</span>
     </div>
   </div>
 
@@ -67,43 +61,20 @@
       <span class="inline-flex items-center gap-[5px] font-mono text-[0.68rem] text-ok px-[9px] py-[2px] rounded-full border"
         style="background: rgba(74,222,128,0.08); border-color: #166534">
         <span class="eyebrow-dot inline-block w-[5px] h-[5px]"></span>
-        Online
+        Server-Side Enabled
       </span>
     </div>
 
     <!-- Form -->
     <div class="p-7">
 
-      <!-- Warning -->
-      <div class="flex gap-[0.65rem] p-[0.85rem_1rem] rounded-[10px] mb-7 text-[0.78rem] text-warn leading-[1.55]"
-        style="background: rgba(245,166,35,0.1); border: 1px solid #78350f">
+      <!-- Info -->
+      <div class="flex gap-[0.65rem] p-[0.85rem_1rem] rounded-[10px] mb-7 text-[0.78rem] text-ok leading-[1.55]"
+        style="background: rgba(74,222,128,0.05); border: 1px solid #166534">
         <svg class="flex-shrink-0 mt-px" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
         </svg>
-        Use only in a trusted, private environment. Ensure no screen recording or sharing is active before entering your private key.
-      </div>
-
-      <!-- Private Key -->
-      <div class="mb-5">
-        <div class="flex items-center justify-between mb-[0.45rem]">
-          <span class="text-[0.82rem] font-medium text-[#f0ede6] font-geist">Private Key</span>
-          <span class="font-mono text-[0.64rem] text-muted bg-surface2 border border-border px-[7px] py-[1px] rounded">PKCS8 · X25519 · PEM</span>
-        </div>
-        <div class="relative flex">
-          <span class="absolute left-[13px] top-[14px] pointer-events-none z-10">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b6b6b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>
-            </svg>
-          </span>
-          <textarea
-            id="kv-privateKey"
-            autocomplete="off" spellcheck="false"
-            placeholder="-----BEGIN PRIVATE KEY-----&#10;MIGHAgEAMBMGByqGSM49...&#10;-----END PRIVATE KEY-----"
-            class="w-full bg-surface2 border border-border text-[#f0ede6] pl-10 pr-4 pt-[0.8rem] pb-3 rounded-[10px] font-mono text-[0.78rem] leading-[1.6] outline-none transition-all focus:border-accent2 placeholder:text-muted placeholder:italic resize-y min-h-[108px]"
-            style="border-width: 1.5px"
-          ></textarea>
-        </div>
+        Using PRIVATE_KEY from Vercel Environment. You no longer need to enter your private key manually.
       </div>
 
       <!-- Ephemeral Pub -->
