@@ -1,0 +1,182 @@
+<!-- pages/keyvault.html -->
+<div class="grid gap-20 max-w-[1000px] mx-auto px-8 py-12 anim-fade-up" style="grid-template-columns: 1fr 460px; align-items: start"
+  id="kv-wrap">
+
+  <!-- LEFT: Description -->
+  <div class="pt-2">
+    <div class="flex items-center gap-2 font-mono text-[0.7rem] text-muted uppercase tracking-[0.12em] mb-6">
+      <span class="eyebrow-dot inline-block"></span>
+      Key Recovery Tool
+    </div>
+
+    <h2 class="font-serif text-[3rem] font-normal leading-[1.1] tracking-tight mb-5">
+      Secure Key<br><em class="text-muted">Decryption</em><br>Vault
+    </h2>
+
+    <p class="text-[0.9rem] text-muted leading-[1.75] mb-9">
+      Recover your AES session key using X25519 elliptic-curve Diffie–Hellman. Every operation runs entirely in your browser — nothing is transmitted or stored.
+    </p>
+
+    <div class="flex flex-col gap-3 border-t border-border pt-6">
+      <div class="flex items-start gap-3 text-[0.83rem] text-muted leading-[1.5]">
+        <span class="flex-shrink-0 w-[18px] h-[18px] mt-px rounded-full flex items-center justify-center" style="background: rgba(74,222,128,0.08)">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </span>
+        Private key never leaves your device
+      </div>
+      <div class="flex items-start gap-3 text-[0.83rem] text-muted leading-[1.5]">
+        <span class="flex-shrink-0 w-[18px] h-[18px] mt-px rounded-full flex items-center justify-center" style="background: rgba(74,222,128,0.08)">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </span>
+        Processed via SubtleCrypto (Web Crypto API)
+      </div>
+      <div class="flex items-start gap-3 text-[0.83rem] text-muted leading-[1.5]">
+        <span class="flex-shrink-0 w-[18px] h-[18px] mt-px rounded-full flex items-center justify-center" style="background: rgba(74,222,128,0.08)">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </span>
+        Zero outbound network requests
+      </div>
+      <div class="flex items-start gap-3 text-[0.83rem] text-muted leading-[1.5]">
+        <span class="flex-shrink-0 w-[18px] h-[18px] mt-px rounded-full flex items-center justify-center" style="background: rgba(74,222,128,0.08)">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </span>
+        Ephemeral &amp; encrypted key cleared after decryption
+      </div>
+      <div class="flex items-start gap-3 text-[0.83rem] text-muted leading-[1.5]">
+        <span class="flex-shrink-0 w-[18px] h-[18px] mt-px rounded-full flex items-center justify-center" style="background: rgba(74,222,128,0.08)">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </span>
+        Memory freed on page close
+      </div>
+    </div>
+
+    <div class="flex flex-wrap gap-2 mt-8">
+      <span class="font-mono text-[0.68rem] text-muted bg-surface border border-border px-[10px] py-[3px] rounded">X25519 ECDH</span>
+      <span class="font-mono text-[0.68rem] text-muted bg-surface border border-border px-[10px] py-[3px] rounded">SHA-256 KDF</span>
+      <span class="font-mono text-[0.68rem] text-muted bg-surface border border-border px-[10px] py-[3px] rounded">XOR Unwrap</span>
+      <span class="font-mono text-[0.68rem] text-muted bg-surface border border-border px-[10px] py-[3px] rounded">PKCS8 PEM</span>
+    </div>
+  </div>
+
+  <!-- RIGHT: Form Card -->
+  <div class="bg-surface border border-border rounded-[16px] overflow-hidden" style="box-shadow: 0 1px 3px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.35)">
+
+    <!-- Card Top -->
+    <div class="flex items-center justify-between px-6 py-4 bg-surface2 border-b border-border">
+      <span class="font-mono text-[0.72rem] font-medium text-muted uppercase tracking-[0.1em]">Decryption Parameters</span>
+      <span class="inline-flex items-center gap-[5px] font-mono text-[0.68rem] text-ok px-[9px] py-[2px] rounded-full border"
+        style="background: rgba(74,222,128,0.08); border-color: #166534">
+        <span class="eyebrow-dot inline-block w-[5px] h-[5px]"></span>
+        Online
+      </span>
+    </div>
+
+    <!-- Form -->
+    <div class="p-7">
+
+      <!-- Warning -->
+      <div class="flex gap-[0.65rem] p-[0.85rem_1rem] rounded-[10px] mb-7 text-[0.78rem] text-warn leading-[1.55]"
+        style="background: rgba(245,166,35,0.1); border: 1px solid #78350f">
+        <svg class="flex-shrink-0 mt-px" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+          <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        Use only in a trusted, private environment. Ensure no screen recording or sharing is active before entering your private key.
+      </div>
+
+      <!-- Private Key -->
+      <div class="mb-5">
+        <div class="flex items-center justify-between mb-[0.45rem]">
+          <span class="text-[0.82rem] font-medium text-[#f0ede6] font-geist">Private Key</span>
+          <span class="font-mono text-[0.64rem] text-muted bg-surface2 border border-border px-[7px] py-[1px] rounded">PKCS8 · X25519 · PEM</span>
+        </div>
+        <div class="relative flex">
+          <span class="absolute left-[13px] top-[14px] pointer-events-none z-10">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b6b6b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>
+            </svg>
+          </span>
+          <textarea
+            id="kv-privateKey"
+            autocomplete="off" spellcheck="false"
+            placeholder="-----BEGIN PRIVATE KEY-----&#10;MIGHAgEAMBMGByqGSM49...&#10;-----END PRIVATE KEY-----"
+            class="w-full bg-surface2 border border-border text-[#f0ede6] pl-10 pr-4 pt-[0.8rem] pb-3 rounded-[10px] font-mono text-[0.78rem] leading-[1.6] outline-none transition-all focus:border-accent2 placeholder:text-muted placeholder:italic resize-y min-h-[108px]"
+            style="border-width: 1.5px"
+          ></textarea>
+        </div>
+      </div>
+
+      <!-- Ephemeral Pub -->
+      <div class="mb-5">
+        <div class="flex items-center justify-between mb-[0.45rem]">
+          <span class="text-[0.82rem] font-medium text-[#f0ede6] font-geist">Ephemeral Public Key</span>
+          <span class="font-mono text-[0.64rem] text-muted bg-surface2 border border-border px-[7px] py-[1px] rounded">Base64</span>
+        </div>
+        <div class="relative flex">
+          <span class="absolute left-[13px] top-1/2 -translate-y-1/2 pointer-events-none z-10">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b6b6b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="7" r="4"/><path d="M4 20c0-4 3.58-7 8-7s8 3 8 7"/>
+            </svg>
+          </span>
+          <input type="text" id="kv-ephemeralPub" autocomplete="off" spellcheck="false"
+            placeholder="Base64 encoded ephemeral public key…"
+            class="w-full bg-surface2 border border-border text-[#f0ede6] pl-10 pr-4 py-3 rounded-[10px] font-mono text-[0.78rem] leading-[1.6] outline-none transition-all focus:border-accent2 placeholder:text-muted placeholder:italic"
+            style="border-width: 1.5px" />
+        </div>
+      </div>
+
+      <!-- Encrypted Key -->
+      <div class="mb-5">
+        <div class="flex items-center justify-between mb-[0.45rem]">
+          <span class="text-[0.82rem] font-medium text-[#f0ede6] font-geist">Encrypted Key</span>
+          <span class="font-mono text-[0.64rem] text-muted bg-surface2 border border-border px-[7px] py-[1px] rounded">Base64 · Wrapped AES</span>
+        </div>
+        <div class="relative flex">
+          <span class="absolute left-[13px] top-1/2 -translate-y-1/2 pointer-events-none z-10">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6b6b6b" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
+            </svg>
+          </span>
+          <input type="text" id="kv-encryptedKey" autocomplete="off" spellcheck="false"
+            placeholder="Base64 encoded wrapped AES key…"
+            class="w-full bg-surface2 border border-border text-[#f0ede6] pl-10 pr-4 py-3 rounded-[10px] font-mono text-[0.78rem] leading-[1.6] outline-none transition-all focus:border-accent2 placeholder:text-muted placeholder:italic"
+            style="border-width: 1.5px" />
+        </div>
+      </div>
+
+      <div class="h-px bg-border my-6"></div>
+
+      <!-- Submit -->
+      <button
+        id="kv-unlockBtn"
+        onclick="runDecryption()"
+        class="w-full flex items-center justify-center gap-[0.55rem] bg-[#f0ede6] text-bg border-none py-[0.9rem] px-6 rounded-[10px] font-geist text-[0.88rem] font-medium cursor-pointer transition-all hover:opacity-90 active:scale-[0.99] disabled:opacity-45 disabled:cursor-not-allowed"
+      >
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/>
+        </svg>
+        <span id="kv-btnLabel">Recover AES Key</span>
+        <div class="kv-spinner hidden" id="kv-spinner"></div>
+      </button>
+    </div>
+
+    <!-- Output -->
+    <div id="kv-output" class="hidden px-6 pb-6 anim-fade-up">
+      <div class="overflow-hidden rounded-[10px] border border-border" id="kv-rBox" style="border-width:1.5px">
+        <div class="flex items-center gap-[0.55rem] px-4 py-[0.7rem] text-[0.78rem] font-medium" id="kv-rHead">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" id="kv-rIcon"></svg>
+          <span id="kv-rTitle"></span>
+        </div>
+        <div class="p-4 bg-surface2" id="kv-rBody"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- responsive fix for keyvault -->
+<style>
+  @media (max-width: 860px) {
+    #kv-wrap { grid-template-columns: 1fr !important; gap: 2.5rem !important; }
+  }
+</style>

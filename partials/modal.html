@@ -1,0 +1,80 @@
+<!-- partials/modal.html -->
+<div
+  id="modal-details"
+  class="modal-overlay fixed inset-0 hidden items-center justify-center z-[1000] p-8"
+  style="background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);"
+  onclick="if(event.target===this) closeModal()"
+>
+  <div class="modal-card bg-surface border border-border w-full max-w-[600px] rounded-[20px] overflow-hidden relative" style="box-shadow: 0 1px 3px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.35)">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between px-8 py-6 border-b border-border bg-surface2">
+      <div class="font-serif text-[1.5rem] tracking-tight">
+        Log <span class="text-accent italic">Details</span>
+      </div>
+      <button onclick="closeModal()" class="bg-transparent border-none text-muted cursor-pointer p-2 flex items-center transition-colors hover:text-[#f0ede6]">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="p-8 grid gap-6 max-h-[70vh] overflow-y-auto">
+      <div class="grid grid-cols-2 gap-6">
+        <div class="flex flex-col gap-2">
+          <div class="font-mono text-[0.65rem] text-muted uppercase tracking-[0.1em]">Device ID</div>
+          <div class="text-[0.95rem] font-light" id="md-device-id">—</div>
+        </div>
+        <div class="flex flex-col gap-2">
+          <div class="font-mono text-[0.65rem] text-muted uppercase tracking-[0.1em]">Status</div>
+          <div id="md-status">—</div>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 gap-6">
+        <div class="flex flex-col gap-2">
+          <div class="font-mono text-[0.65rem] text-muted uppercase tracking-[0.1em]">Version</div>
+          <div class="font-mono text-[0.75rem] text-muted" id="md-version">—</div>
+        </div>
+        <div class="flex flex-col gap-2">
+          <div class="font-mono text-[0.65rem] text-muted uppercase tracking-[0.1em]">Files Count</div>
+          <div class="font-mono text-[0.75rem] text-muted" id="md-files">—</div>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <div class="font-mono text-[0.65rem] text-muted uppercase tracking-[0.1em]">Diterima Pada</div>
+        <div class="text-[0.95rem] font-light" id="md-date">—</div>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <div class="font-mono text-[0.65rem] text-muted uppercase tracking-[0.1em]">Ephemeral Public Key</div>
+        <div class="mono-box relative font-mono text-[0.8rem] bg-bg border border-border p-4 rounded-xl text-accent2 break-all leading-relaxed" id="md-pub">
+          <span id="md-pub-text">—</span>
+          <button class="copy-btn-mini absolute top-2 right-2 bg-surface2 border border-border text-muted px-2 py-1 rounded-md font-mono text-[0.6rem] cursor-pointer transition-all hover:border-accent hover:text-accent"
+            onclick="copyToClipboard(document.getElementById('md-pub-text').textContent, this)">Copy</button>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <div class="font-mono text-[0.65rem] text-muted uppercase tracking-[0.1em]">Encrypted AES Key</div>
+        <div class="mono-box relative font-mono text-[0.8rem] bg-bg border border-border p-4 rounded-xl text-accent2 break-all leading-relaxed" id="md-key">
+          <span id="md-key-text">—</span>
+          <button class="copy-btn-mini absolute top-2 right-2 bg-surface2 border border-border text-muted px-2 py-1 rounded-md font-mono text-[0.6rem] cursor-pointer transition-all hover:border-accent hover:text-accent"
+            onclick="copyToClipboard(document.getElementById('md-key-text').textContent, this)">Copy</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="px-8 pb-8 flex justify-end">
+      <button
+        onclick="closeModal()"
+        class="bg-accent text-bg px-6 py-[0.7rem] font-mono text-[0.85rem] font-medium tracking-[0.08em] uppercase cursor-pointer transition-all hover:opacity-90"
+      >
+        Selesai
+      </button>
+    </div>
+  </div>
+</div>

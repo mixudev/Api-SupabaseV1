@@ -1,0 +1,68 @@
+<!-- pages/dashboard.html -->
+<main class="max-w-[1200px] mx-auto px-8 py-12 anim-fade-up">
+
+  <div class="font-serif text-[2.5rem] tracking-tight mb-2">
+    Device <em class="text-accent2 not-italic" style="font-style:italic">Logs</em>
+  </div>
+  <div class="font-mono text-[0.75rem] text-muted mb-10" id="last-updated">// memuat data...</div>
+
+  <!-- API Box -->
+  <div class="relative bg-[#0a0f1a] border border-[#1a2a4a] p-6 mb-8">
+    <span class="absolute -top-[0.55rem] left-4 bg-[#0a0f1a] px-2 font-mono text-[0.65rem] tracking-[0.12em] text-accent2">
+      ⚡ ENDPOINT API
+    </span>
+    <div class="font-mono text-[0.85rem] text-accent2 mb-4 break-all">
+      POST <span id="api-endpoint-url"></span>/api/device
+    </div>
+    <pre class="bg-[#050d1a] border border-[#1a2a4a] p-4 font-mono text-[0.75rem] text-[#7ab0d4] leading-[1.8] overflow-x-auto" id="api-example-box"></pre>
+  </div>
+
+  <!-- Stats -->
+  <div class="grid gap-px mb-8 border border-border bg-border" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr))">
+    <div class="bg-surface p-6">
+      <div class="font-mono text-[0.68rem] uppercase tracking-[0.1em] text-muted mb-2">Total Log</div>
+      <div class="font-serif text-[2rem] tracking-tight" id="stat-total">—</div>
+    </div>
+    <div class="bg-surface p-6">
+      <div class="font-mono text-[0.68rem] uppercase tracking-[0.1em] text-muted mb-2">Device Unik</div>
+      <div class="font-serif text-[2rem] tracking-tight" id="stat-devices">—</div>
+    </div>
+    <div class="bg-surface p-6">
+      <div class="font-mono text-[0.68rem] uppercase tracking-[0.1em] text-muted mb-2">Status OK</div>
+      <div class="font-serif text-[2rem] tracking-tight text-accent" id="stat-ok">—</div>
+    </div>
+    <div class="bg-surface p-6">
+      <div class="font-mono text-[0.68rem] uppercase tracking-[0.1em] text-muted mb-2">Status Error</div>
+      <div class="font-serif text-[2rem] tracking-tight text-danger" id="stat-err">—</div>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="flex gap-4 mb-6 flex-wrap">
+    <input
+      class="bg-surface border border-border text-[#f0ede6] px-4 py-[0.6rem] font-mono text-[0.8rem] outline-none transition-colors focus:border-accent placeholder:text-muted flex-1 min-w-[200px]"
+      id="filter-device"
+      placeholder="🔍 Cari device_id..."
+      oninput="applyFilter()"
+    />
+    <select
+      class="bg-surface border border-border text-[#f0ede6] px-4 py-[0.6rem] font-mono text-[0.8rem] outline-none cursor-pointer"
+      id="filter-status"
+      onchange="applyFilter()"
+    >
+      <option value="">Semua Status</option>
+      <option value="ok">OK</option>
+      <option value="error">Error</option>
+      <option value="warn">Warning</option>
+    </select>
+  </div>
+
+  <!-- Table -->
+  <div class="border border-border overflow-auto" id="table-container">
+    <div class="py-16 text-center font-mono text-muted text-[0.85rem]">
+      <div class="loading-dots"><span></span><span></span><span></span></div>
+      <div class="mt-4">Memuat data...</div>
+    </div>
+  </div>
+
+</main>
