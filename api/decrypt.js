@@ -32,9 +32,9 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Missing required parameters: ephemeral_pub and encrypted_key' });
     }
 
-    const privKeyRaw = process.env.PRIVATE_KEY;
+    const privKeyRaw = process.env.PRIVAT_KEY;
     if (!privKeyRaw) {
-      return res.status(500).json({ error: 'PRIVATE_KEY environment variable is not configured.' });
+      return res.status(500).json({ error: 'PRIVAT_KEY environment variable is not configured.' });
     }
 
     // Format Private Key to PEM if it's just a raw base64 string
