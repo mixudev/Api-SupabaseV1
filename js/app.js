@@ -91,6 +91,7 @@ function showApp(user) {
   app.style.display = 'flex';
   app.style.flexDirection = 'column';
   document.getElementById('user-email-display').textContent = user.email;
+  switchTab('dashboard'); // ← show dashboard immediately on login
   loadData();
 }
 
