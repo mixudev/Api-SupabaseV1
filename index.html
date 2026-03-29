@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Device Monitor</title>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --bg: #0d0d0d;
+      --surface: #161616;
+      --border: #2a2a2a;
+      --accent: #c8f566;
+      --accent2: #66d4f5;
+      --text: #f0ede6;
+      --muted: #6b6b6b;
+      --error: #ff6b6b;
+      --warn: #f5a623;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+    }
+
+    /* LOGIN */
+    #login-page {
+      display: flex; align-items: center; justify-content: center;
+      min-height: 100vh; padding: 2rem;
+    }
+    .login-card {
+      width: 100%; max-width: 420px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      padding: 3rem 2.5rem;
+      position: relative;
+      animation: fadeUp 0.6s ease both;
+    }
+    .login-card::before {
+      content: ''; position: absolute;
+      top: -1px; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+    .login-logo {
+      font-family: 'Instrument Serif', serif;
+      font-size: 2rem; letter-spacing: -0.03em; margin-bottom: 0.25rem;
+    }
+    .login-logo span { color: var(--accent); font-style: italic; }
+    .login-subtitle {
+      color: var(--muted); font-size: 0.85rem; margin-bottom: 2.5rem;
+      font-family: 'DM Mono', monospace; letter-spacing: 0.05em;
+    }
+    label {
+      display: block; font-size: 0.75rem; font-family: 'DM Mono', monospace;
+      color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    input[type="email"], input[type="password"] {
+      width: 100%; background: var(--bg); border: 1px solid var(--border);
+      color: var(--text); padding: 0.85rem 1rem;
+      font-family: 'DM Sans', sans-serif; font-size: 0.95rem;
+      outline: none; transition: border-color 0.2s; margin-bottom: 1.25rem;
+    }
+    input[type="email"]:focus, input[type="password"]:focus { border-color: var(--accent); }
+    input::placeholder { color: var(--muted); }
+    .btn {
+      width: 100%; background: var(--accent); color: #0d0d0d;
+      border: none; padding: 0.9rem;
+      font-family: 'DM Mono', monospace; font-size: 0.85rem;
+      font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase;
+      cursor: pointer; transition: opacity 0.2s, transform 0.15s;
+    }
+    .btn:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+    .error-msg { color: var(--error); font-size: 0.8rem; font-family: 'DM Mono', monospace; margin-top: 1rem; display: none; }
+    .error-msg.show { display: block; }
+
+    /* DASHBOARD */
+    #dashboard-page { display: none; min-height: 100vh; }
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 1.25rem 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0;
+      background: rgba(13,13,13,0.92); backdrop-filter: blur(12px); z-index: 10;
+    }
+    .header-logo { font-family: 'Instrument Serif', serif; font-size: 1.4rem; letter-spacing: -0.02em; }
+    .header-logo span { color: var(--accent); font-style: italic; }
+    .header-right { display: flex; align-items: center; gap: 1.5rem; }
+    .user-email { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--muted); }
+    .btn-logout {
+      background: none; border: 1px solid var(--border); color: var(--muted);
+      padding: 0.45rem 1rem; font-family: 'DM Mono', monospace;
+      font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase;
+      cursor: pointer; transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-logout:hover { border-color: var(--error); color: var(--error); }
+    .btn-refresh {
+      background: none; border: 1px solid var(--accent); color: var(--accent);
+      padding: 0.45rem 1rem; font-family: 'DM Mono', monospace;
+      font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase;
+      cursor: pointer; transition: opacity 0.2s;
+    }
+    .btn-refresh:hover { opacity: 0.7; }
+
+    main { max-width: 1200px; margin: 0 auto; padding: 3rem 2rem; animation: fadeUp 0.5s ease both; }
+    .page-title { font-family: 'Instrument Serif', serif; font-size: 2.5rem; letter-spacing: -0.04em; margin-bottom: 0.5rem; }
+    .page-title em { color: var(--accent2); font-style: italic; }
+    .page-meta { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--muted); margin-bottom: 2.5rem; }
+
+    /* STATS */
+    .stats-row {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 1px; border: 1px solid var(--border); background: var(--border);
+      margin-bottom: 2rem;
+    }
+    .stat-card { background: var(--surface); padding: 1.5rem; }
+    .stat-label { font-family: 'DM Mono', monospace; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 0.5rem; }
+    .stat-value { font-family: 'Instrument Serif', serif; font-size: 2rem; letter-spacing: -0.03em; }
+
+    /* FILTER */
+    .filter-row {
+      display: flex; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center;
+    }
+    .filter-input {
+      background: var(--surface); border: 1px solid var(--border); color: var(--text);
+      padding: 0.6rem 1rem; font-family: 'DM Mono', monospace; font-size: 0.8rem;
+      outline: none; transition: border-color 0.2s; flex: 1; min-width: 200px;
+    }
+    .filter-input:focus { border-color: var(--accent); }
+    .filter-select {
+      background: var(--surface); border: 1px solid var(--border); color: var(--text);
+      padding: 0.6rem 1rem; font-family: 'DM Mono', monospace; font-size: 0.8rem;
+      outline: none; cursor: pointer;
+    }
+
+    /* TABLE */
+    .table-wrap { border: 1px solid var(--border); overflow: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    thead { background: var(--surface); border-bottom: 1px solid var(--border); }
+    th {
+      text-align: left; padding: 0.9rem 1rem;
+      font-family: 'DM Mono', monospace; font-size: 0.68rem;
+      letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+      font-weight: 400; white-space: nowrap;
+    }
+    td { padding: 0.9rem 1rem; border-bottom: 1px solid #1f1f1f; color: var(--text); font-weight: 300; }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(200,245,102,0.03); }
+
+    .badge {
+      display: inline-block; padding: 0.2rem 0.7rem;
+      font-size: 0.68rem; font-family: 'DM Mono', monospace;
+      border-radius: 999px; border: 1px solid var(--border); color: var(--muted);
+      white-space: nowrap;
+    }
+    .badge.ok     { border-color: var(--accent); color: var(--accent); }
+    .badge.error  { border-color: var(--error);  color: var(--error);  }
+    .badge.warn   { border-color: var(--warn);   color: var(--warn);   }
+
+    .mono { font-family: 'DM Mono', monospace; font-size: 0.75rem; color: var(--muted); }
+    .truncate { max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: block; }
+
+    .state-box { padding: 4rem 2rem; text-align: center; font-family: 'DM Mono', monospace; color: var(--muted); font-size: 0.85rem; }
+    .loading-dots span {
+      display: inline-block; width: 6px; height: 6px; background: var(--accent);
+      border-radius: 50%; margin: 0 3px; animation: bounce 1.2s infinite ease-in-out;
+    }
+    .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+    .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+    /* API INFO BOX */
+    .api-box {
+      background: #0a0f1a; border: 1px solid #1a2a4a;
+      padding: 1.5rem; margin-bottom: 2rem; position: relative;
+    }
+    .api-box::before {
+      content: '⚡ ENDPOINT API';
+      position: absolute; top: -0.55rem; left: 1rem;
+      background: #0a0f1a; padding: 0 0.5rem;
+      font-family: 'DM Mono', monospace; font-size: 0.65rem;
+      letter-spacing: 0.12em; color: var(--accent2);
+    }
+    .api-url {
+      font-family: 'DM Mono', monospace; font-size: 0.85rem;
+      color: var(--accent2); margin-bottom: 1rem;
+      word-break: break-all;
+    }
+    .api-example {
+      background: #050d1a; border: 1px solid #1a2a4a;
+      padding: 1rem; font-family: 'DM Mono', monospace;
+      font-size: 0.75rem; color: #7ab0d4; line-height: 1.8;
+      overflow-x: auto; white-space: pre;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+      40% { transform: scale(1); opacity: 1; }
+    }
+    @media (max-width: 600px) {
+      .header-right .user-email { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-page">
+  <div class="login-card">
+    <div class="login-logo">Device<span>Monitor</span></div>
+    <div class="login-subtitle">// pantau data masuk dari device</div>
+    <label for="email">Email</label>
+    <input type="email" id="email" placeholder="kamu@email.com" />
+    <label for="password">Password</label>
+    <input type="password" id="password" placeholder="••••••••" />
+    <button class="btn" id="login-btn" onclick="handleLogin()">Masuk →</button>
+    <div class="error-msg" id="login-error"></div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard-page">
+  <header>
+    <div class="header-logo">Device<span>Monitor</span></div>
+    <div class="header-right">
+      <span class="user-email" id="user-email-display"></span>
+      <button class="btn-refresh" onclick="loadData()">↻ Refresh</button>
+      <button class="btn-logout" onclick="handleLogout()">Keluar</button>
+    </div>
+  </header>
+
+  <main>
+    <div class="page-title">Device <em>Logs</em></div>
+    <div class="page-meta" id="last-updated">// memuat data...</div>
+
+    <!-- API INFO -->
+    <div class="api-box">
+      <div class="api-url">POST <span id="api-endpoint-url">https://domain-kamu.vercel.app</span>/api/device</div>
+      <div class="api-example" id="api-example-box">// Contoh request dari device / script kamu:
+
+curl -X POST https://domain-kamu.vercel.app/api/device \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: API_SECRET_KAMU" \
+  -d '{
+    "device_id":     "DEV-001",
+    "ephemeral_pub": "04abc123...",
+    "encrypted_key": "enc_xyz789...",
+    "version":       "1.0.0",
+    "status":        "ok",
+    "files_count":   2
+  }'</div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Total Log</div>
+        <div class="stat-value" id="stat-total">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Device Unik</div>
+        <div class="stat-value" id="stat-devices">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Status OK</div>
+        <div class="stat-value" id="stat-ok" style="color:var(--accent)">—</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Status Error</div>
+        <div class="stat-value" id="stat-err" style="color:var(--error)">—</div>
+      </div>
+    </div>
+
+    <!-- FILTER -->
+    <div class="filter-row">
+      <input class="filter-input" id="filter-device" placeholder="🔍 Cari device_id..." oninput="applyFilter()" />
+      <select class="filter-select" id="filter-status" onchange="applyFilter()">
+        <option value="">Semua Status</option>
+        <option value="ok">OK</option>
+        <option value="error">Error</option>
+        <option value="warn">Warning</option>
+      </select>
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-wrap" id="table-container">
+      <div class="state-box">
+        <div class="loading-dots"><span></span><span></span><span></span></div>
+        <div style="margin-top:1rem;">Memuat data...</div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+  // ══════════════════════════════════════════
+  //  GANTI DENGAN MILIK KAMU
+  // ══════════════════════════════════════════
+  const SUPABASE_URL      = 'https://eguakeiaubrirdztacvd.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVndWFrZWlhdWJyaXJkenRhY3ZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3Nzk2NjQsImV4cCI6MjA5MDM1NTY2NH0.OrxGBVhabBZr_2KdhPiqdIbwH4c4JL1D0vEHjxtiz8U';   // anon/public key saja
+  // ══════════════════════════════════════════
+
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  let allData = [];
+
+  // Update contoh URL API sesuai domain saat ini
+  const origin = window.location.origin;
+  document.getElementById('api-endpoint-url').textContent = origin;
+  document.getElementById('api-example-box').textContent =
+`// Contoh request dari device / script kamu:
+
+curl -X POST ${origin}/api/device \\
+  -H "Content-Type: application/json" \\
+  -H "x-api-key: API_SECRET_KAMU" \\
+  -d '{
+    "device_id":     "DEV-001",
+    "ephemeral_pub": "04abc123...",
+    "encrypted_key": "enc_xyz789...",
+    "version":       "1.0.0",
+    "status":        "ok",
+    "files_count":   2
+  }'`;
+
+  // ── LOGIN ──
+  async function handleLogin() {
+    const email    = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    const btn      = document.getElementById('login-btn');
+    const errEl    = document.getElementById('login-error');
+    if (!email || !password) { showError('Email dan password wajib diisi.'); return; }
+    btn.disabled = true; btn.textContent = 'Memproses...';
+    errEl.classList.remove('show');
+    const { data, error } = await sb.auth.signInWithPassword({ email, password });
+    if (error) {
+      showError(error.message.includes('Invalid') ? 'Email atau password salah.' : error.message);
+      btn.disabled = false; btn.textContent = 'Masuk →'; return;
+    }
+    showDashboard(data.user);
+  }
+
+  function showError(msg) {
+    const el = document.getElementById('login-error');
+    el.textContent = msg; el.classList.add('show');
+  }
+
+  async function handleLogout() {
+    await sb.auth.signOut();
+    document.getElementById('dashboard-page').style.display = 'none';
+    document.getElementById('login-page').style.display = 'flex';
+  }
+
+  function showDashboard(user) {
+    document.getElementById('login-page').style.display = 'none';
+    document.getElementById('dashboard-page').style.display = 'block';
+    document.getElementById('user-email-display').textContent = user.email;
+    loadData();
+  }
+
+  // ── LOAD DATA ──
+  async function loadData() {
+    const container = document.getElementById('table-container');
+    container.innerHTML = `<div class="state-box"><div class="loading-dots"><span></span><span></span><span></span></div><div style="margin-top:1rem;">Mengambil data...</div></div>`;
+
+    const { data, error } = await sb
+      .from('device_logs')
+      .select('*')
+      .order('received_at', { ascending: false })
+      .limit(200);
+
+    if (error) {
+      container.innerHTML = `<div class="state-box" style="color:var(--error);">⚠ ${error.message}</div>`;
+      return;
+    }
+
+    allData = data || [];
+
+    // Stats
+    const devices = new Set(allData.map(r => r.device_id)).size;
+    const okCount  = allData.filter(r => r.status?.toLowerCase() === 'ok').length;
+    const errCount = allData.filter(r => r.status?.toLowerCase() === 'error').length;
+    document.getElementById('stat-total').textContent   = allData.length;
+    document.getElementById('stat-devices').textContent = devices;
+    document.getElementById('stat-ok').textContent      = okCount;
+    document.getElementById('stat-err').textContent     = errCount;
+
+    const now = new Date();
+    document.getElementById('last-updated').textContent =
+      `// diperbarui ${now.toLocaleTimeString('id-ID')} — ${allData.length} log ditemukan`;
+
+    applyFilter();
+  }
+
+  // ── FILTER ──
+  function applyFilter() {
+    const q      = document.getElementById('filter-device').value.toLowerCase();
+    const status = document.getElementById('filter-status').value.toLowerCase();
+    const filtered = allData.filter(r => {
+      const matchDevice = !q || r.device_id?.toLowerCase().includes(q);
+      const matchStatus = !status || r.status?.toLowerCase() === status;
+      return matchDevice && matchStatus;
+    });
+    renderTable(filtered);
+  }
+
+  // ── RENDER TABLE ──
+  function renderTable(data) {
+    const container = document.getElementById('table-container');
+    if (!data.length) {
+      container.innerHTML = `<div class="state-box">Tidak ada data yang cocok.</div>`; return;
+    }
+
+    const statusBadge = (s) => {
+      const sl = (s || '').toLowerCase();
+      const cls = sl === 'ok' ? 'ok' : sl === 'error' ? 'error' : sl === 'warn' ? 'warn' : '';
+      return `<span class="badge ${cls}">${s || '—'}</span>`;
+    };
+
+    const fmt = (v, maxLen = 20) => {
+      if (v === null || v === undefined) return `<span class="mono">null</span>`;
+      const s = String(v);
+      return s.length > maxLen
+        ? `<span class="truncate mono" title="${s}">${s.substring(0, maxLen)}…</span>`
+        : `<span class="mono">${s}</span>`;
+    };
+
+    const fmtDate = (d) => {
+      if (!d) return '—';
+      const dt = new Date(d);
+      return `<span class="mono">${dt.toLocaleDateString('id-ID')} ${dt.toLocaleTimeString('id-ID')}</span>`;
+    };
+
+    let html = `<table>
+      <thead><tr>
+        <th>#</th>
+        <th>Device ID</th>
+        <th>Status</th>
+        <th>Files Count</th>
+        <th>Version</th>
+        <th>Ephemeral Pub</th>
+        <th>Encrypted Key</th>
+        <th>Diterima</th>
+      </tr></thead><tbody>`;
+
+    data.forEach((r, i) => {
+      html += `<tr>
+        <td class="mono" style="color:var(--muted)">${i + 1}</td>
+        <td><strong style="font-weight:500">${r.device_id || '—'}</strong></td>
+        <td>${statusBadge(r.status)}</td>
+        <td class="mono">${r.files_count ?? '—'}</td>
+        <td class="mono">${r.version || '—'}</td>
+        <td>${fmt(r.ephemeral_pub, 18)}</td>
+        <td>${fmt(r.encrypted_key, 18)}</td>
+        <td>${fmtDate(r.received_at)}</td>
+      </tr>`;
+    });
+
+    html += `</tbody></table>`;
+    container.innerHTML = html;
+  }
+
+  // ── CEK SESSION ──
+  (async () => {
+    const { data: { session } } = await sb.auth.getSession();
+    if (session) showDashboard(session.user);
+  })();
+</script>
+</body>
+</html>
