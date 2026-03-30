@@ -150,3 +150,81 @@ async function runDecryption() {
     kvSetLoading(false);
   }
 }
+
+// ─── Modal Restore Feature ──────────────────
+let _modalTimer = null;
+
+async function restoreKeyInModal() {
+  const btn    = document.getElementById('btn-restore-key');
+  const loader = document.getElementById('restore-loader');
+  const result = document.getElementById('restore-key-container');
+  const text   = document.getElementById('restored-key-text');
+  const timerT = document.getElementById('restore-timer-text');
+  const bar    = document.getElementById('restore-timer-bar');
+
+  const ephB64 = document.getElementById('md-pub-text').textContent.trim();
+  const encB64 = document.getElementById('md-key-text').textContent.trim();
+
+  if (!ephB64 || !encB64 || ephB64 === '—' || encB64 === '—') return;
+
+  // UI: Loading
+  loader.classList.remove('hidden');
+  loader.classList.add('flex');
+  btn.disabled = true;
+
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    const headers = { 'Content-Type': 'application/json' };
+    if (session) headers['Authorization'] = `Bearer ${session.access_token}`;
+
+    const response = await fetch('/api/decrypt', {
+      method: 'POST',
+      headers: headers,
+      body: JSON.stringify({ ephemeral_pub: ephB64, encrypted_key: encB64 })
+    });
+
+    const resData = await response.json();
+    if (!response.ok || !resData.success) throw new Error(resData.error || 'Failed');
+
+    // UI: Show result
+    text.textContent = resData.recovered_hex;
+    result.classList.remove('hidden');
+    
+    // Timer logic (30s)
+    if (_modalTimer) clearInterval(_modalTimer);
+    let seconds = 30;
+    timerT.textContent = `${seconds}s remaining`;
+    bar.style.width = '100%';
+    bar.style.transition = 'none';
+    void bar.offsetWidth; // trigger reflow
+    bar.style.transition = 'width 30s linear';
+    bar.style.width = '0%';
+
+    _modalTimer = setInterval(() => {
+      seconds--;
+      timerT.textContent = `${seconds}s remaining`;
+      if (seconds <= 0) {
+        clearInterval(_modalTimer);
+        result.classList.add('hidden');
+        btn.disabled = false;
+      }
+    }, 1000);
+
+  } catch (e) {
+    alert('Decryption Error: ' + e.message);
+    btn.disabled = false;
+  } finally {
+    loader.classList.add('hidden');
+    loader.classList.remove('flex');
+  }
+}
+
+function resetModalRestore() {
+  if (_modalTimer) clearInterval(_modalTimer);
+  _modalTimer = null;
+  
+  const result = document.getElementById('restore-key-container');
+  const btn    = document.getElementById('btn-restore-key');
+  if (result) result.classList.add('hidden');
+  if (btn) btn.disabled = false;
+}

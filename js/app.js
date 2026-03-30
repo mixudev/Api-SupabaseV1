@@ -287,6 +287,9 @@ function showDetails(index) {
   document.getElementById('md-pub-text').textContent  = r.ephemeral_pub || '—';
   document.getElementById('md-key-text').textContent  = r.encrypted_key || '—';
 
+  // Restore Reset
+  if (typeof resetModalRestore === 'function') resetModalRestore();
+
   const sl  = (r.status || '').toLowerCase();
   const map = { ok: 'border-accent text-accent', error: 'border-danger text-danger', warn: 'border-warn text-warn' };
   const cls = map[sl] || 'border-border text-muted';
@@ -301,6 +304,8 @@ function showDetails(index) {
 
 function closeModal() {
   const overlay = document.getElementById('modal-details');
+  if (typeof resetModalRestore === 'function') resetModalRestore();
+  
   overlay.classList.remove('active');
   setTimeout(() => {
     overlay.classList.add('hidden');

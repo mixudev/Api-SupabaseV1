@@ -1,80 +1,118 @@
 <!-- partials/modal.html -->
 <div
   id="modal-details"
-  class="modal-overlay fixed inset-0 hidden items-center justify-center z-[1000] p-8"
-  style="background: rgba(0,0,0,0.8); backdrop-filter: blur(8px);"
+  class="modal-overlay fixed inset-0 hidden items-center justify-center z-[1000] p-4 md:p-8"
+  style="background: rgba(4, 7, 12, 0.85); backdrop-filter: blur(12px);"
   onclick="if(event.target===this) closeModal()"
 >
-  <div class="modal-card bg-surface border border-border w-full max-w-[600px] rounded-[20px] overflow-hidden relative" style="box-shadow: 0 1px 3px rgba(0,0,0,0.4), 0 8px 24px rgba(0,0,0,0.35)">
+  <div class="modal-card bg-[#0b0f17] border border-[#1e2a4a] w-full max-w-[540px] rounded-[24px] overflow-hidden relative shadow-2xl anim-fade-up">
 
-    <!-- Header -->
-    <div class="flex items-center justify-between px-8 py-6 border-b border-border bg-surface2">
-      <div class="font-serif text-[1.5rem] tracking-tight">
-        Log <span class="text-accent italic">Details</span>
+    <!-- Header: Ultra Minimalist -->
+    <div class="flex items-center justify-between px-8 py-6 border-b border-[#1e2a4a]/50">
+      <div class="flex items-center gap-3">
+        <div class="w-2 h-2 rounded-full bg-accent animate-pulse"></div>
+        <span class="font-mono text-[0.7rem] uppercase tracking-[0.2em] text-muted">Device Details</span>
       </div>
-      <button onclick="closeModal()" class="bg-transparent border-none text-muted cursor-pointer p-2 flex items-center transition-colors hover:text-[#f0ede6]">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <button onclick="closeModal()" class="group bg-transparent border-none text-muted cursor-pointer p-2 flex items-center transition-all hover:text-white">
+        <svg class="transition-transform group-hover:rotate-90" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
         </svg>
       </button>
     </div>
 
     <!-- Body -->
-    <div class="p-8 grid gap-6 max-h-[70vh] overflow-y-auto">
-      <div class="grid grid-cols-2 gap-6">
-        <div class="flex flex-col gap-2">
-          <div class="font-mono text-[0.65rem] text-muted uppercase tracking-[0.1em]">Device ID</div>
-          <div class="text-[0.95rem] font-light" id="md-device-id">—</div>
+    <div class="p-8 space-y-8 max-h-[75vh] overflow-y-auto custom-scrollbar">
+      
+      <!-- Top Info Grid -->
+      <div class="grid grid-cols-2 gap-x-10 gap-y-6">
+        <div class="space-y-1">
+          <div class="font-mono text-[0.6rem] text-muted uppercase tracking-widest">Identifier</div>
+          <div class="text-[1.1rem] font-medium tracking-tight text-[#f0ede6]" id="md-device-id">—</div>
         </div>
-        <div class="flex flex-col gap-2">
-          <div class="font-mono text-[0.65rem] text-muted uppercase tracking-[0.1em]">Status</div>
+        <div class="space-y-1">
+          <div class="font-mono text-[0.6rem] text-muted uppercase tracking-widest">Status / Health</div>
           <div id="md-status">—</div>
         </div>
-      </div>
-
-      <div class="grid grid-cols-2 gap-6">
-        <div class="flex flex-col gap-2">
-          <div class="font-mono text-[0.65rem] text-muted uppercase tracking-[0.1em]">Version</div>
-          <div class="font-mono text-[0.75rem] text-muted" id="md-version">—</div>
+        <div class="space-y-1">
+          <div class="font-mono text-[0.6rem] text-muted uppercase tracking-widest">Version / Count</div>
+          <div class="flex items-center gap-2 font-mono text-[0.75rem] text-muted">
+             <span id="md-version">—</span>
+             <span class="opacity-30">/</span>
+             <span id="md-files">—</span>
+          </div>
         </div>
-        <div class="flex flex-col gap-2">
-          <div class="font-mono text-[0.65rem] text-muted uppercase tracking-[0.1em]">Files Count</div>
-          <div class="font-mono text-[0.75rem] text-muted" id="md-files">—</div>
-        </div>
-      </div>
-
-      <div class="flex flex-col gap-2">
-        <div class="font-mono text-[0.65rem] text-muted uppercase tracking-[0.1em]">Diterima Pada</div>
-        <div class="text-[0.95rem] font-light" id="md-date">—</div>
-      </div>
-
-      <div class="flex flex-col gap-2">
-        <div class="font-mono text-[0.65rem] text-muted uppercase tracking-[0.1em]">Ephemeral Public Key</div>
-        <div class="mono-box relative font-mono text-[0.8rem] bg-bg border border-border p-4 rounded-xl text-accent2 break-all leading-relaxed" id="md-pub">
-          <span id="md-pub-text">—</span>
-          <button class="copy-btn-mini absolute top-2 right-2 bg-surface2 border border-border text-muted px-2 py-1 rounded-md font-mono text-[0.6rem] cursor-pointer transition-all hover:border-accent hover:text-accent"
-            onclick="copyToClipboard(document.getElementById('md-pub-text').textContent, this)">Copy</button>
+        <div class="space-y-1">
+          <div class="font-mono text-[0.6rem] text-muted uppercase tracking-widest">Last Check-in</div>
+          <div class="text-[0.8rem] text-muted/80" id="md-date">—</div>
         </div>
       </div>
 
-      <div class="flex flex-col gap-2">
-        <div class="font-mono text-[0.65rem] text-muted uppercase tracking-[0.1em]">Encrypted AES Key</div>
-        <div class="mono-box relative font-mono text-[0.8rem] bg-bg border border-border p-4 rounded-xl text-accent2 break-all leading-relaxed" id="md-key">
-          <span id="md-key-text">—</span>
-          <button class="copy-btn-mini absolute top-2 right-2 bg-surface2 border border-border text-muted px-2 py-1 rounded-md font-mono text-[0.6rem] cursor-pointer transition-all hover:border-accent hover:text-accent"
-            onclick="copyToClipboard(document.getElementById('md-key-text').textContent, this)">Copy</button>
+      <div class="h-px bg-gradient-to-r from-transparent via-[#1e2a4a] to-transparent"></div>
+
+      <!-- Keys Section -->
+      <div class="space-y-6">
+        <!-- Ephemeral Public Key -->
+        <div class="space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="font-mono text-[0.6rem] text-muted uppercase tracking-widest">Ephemeral Pub Key</span>
+            <button class="text-[0.6rem] text-accent/60 hover:text-accent font-mono transition-colors uppercase tracking-wider"
+                    onclick="copyToClipboard(document.getElementById('md-pub-text').textContent, this)">Copy Raw</button>
+          </div>
+          <div class="bg-[#05080f] border border-[#1e2a4a]/40 p-4 rounded-xl">
+             <div class="font-mono text-[0.72rem] text-accent2 break-all leading-relaxed opacity-80" id="md-pub-text">—</div>
+          </div>
+        </div>
+
+        <!-- Encrypted AES Key -->
+        <div class="space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="font-mono text-[0.6rem] text-muted uppercase tracking-widest">Encrypted Metadata</span>
+            <button class="text-[0.6rem] text-accent/60 hover:text-accent font-mono transition-colors uppercase tracking-wider"
+                    onclick="copyToClipboard(document.getElementById('md-key-text').textContent, this)">Copy Raw</button>
+          </div>
+          <div class="bg-[#05080f] border border-[#1e2a4a]/40 p-4 rounded-xl">
+             <div class="font-mono text-[0.72rem] text-accent2 break-all leading-relaxed opacity-80" id="md-key-text">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action: RESTORE KEY -->
+      <div class="pt-4">
+        <button id="btn-restore-key" onclick="restoreKeyInModal()"
+                class="w-full relative overflow-hidden group bg-accent hover:bg-white text-bg py-4 rounded-xl font-mono text-[0.75rem] font-bold uppercase tracking-[0.15em] transition-all active:scale-[0.98]">
+           <span class="relative z-10 flex items-center justify-center gap-2">
+             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+               <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
+             </svg>
+             Restore Plaintext Key
+           </span>
+           <div id="restore-loader" class="absolute inset-0 bg-white/20 hidden items-center justify-center z-20">
+              <div class="w-5 h-5 border-2 border-bg border-t-transparent rounded-full animate-spin"></div>
+           </div>
+        </button>
+
+        <!-- Restore Result Area -->
+        <div id="restore-key-container" class="hidden mt-4 overflow-hidden rounded-xl border border-accent/20 bg-accent/5 anim-fade-up">
+           <div class="p-5 space-y-3">
+             <div class="flex justify-between items-center">
+               <span class="font-mono text-[0.65rem] text-accent font-bold uppercase tracking-widest">Recovered Session Key</span>
+               <span id="restore-timer-text" class="font-mono text-[0.65rem] text-muted uppercase">30s remaining</span>
+             </div>
+             <div id="restored-key-text" class="font-mono text-[0.95rem] text-[#f0ede6] break-all selection:bg-accent selection:text-bg">
+               <!-- KEY GOES HERE -->
+             </div>
+           </div>
+           <!-- Progress bar for timer -->
+           <div class="h-[2px] bg-accent/20 w-full relative">
+              <div id="restore-timer-bar" class="absolute top-0 left-0 h-full bg-accent transition-all duration-1000 ease-linear" style="width: 100%"></div>
+           </div>
         </div>
       </div>
     </div>
 
-    <!-- Footer -->
-    <div class="px-8 pb-8 flex justify-end">
-      <button
-        onclick="closeModal()"
-        class="bg-accent text-bg px-6 py-[0.7rem] font-mono text-[0.85rem] font-medium tracking-[0.08em] uppercase cursor-pointer transition-all hover:opacity-90"
-      >
-        Selesai
-      </button>
+    <!-- Clear Footer -->
+    <div class="px-8 py-6 bg-[#05080f]/50 flex justify-end">
+       <button onclick="closeModal()" class="text-muted hover:text-white font-mono text-[0.7rem] uppercase tracking-widest transition-colors">Done & Close</button>
     </div>
   </div>
 </div>

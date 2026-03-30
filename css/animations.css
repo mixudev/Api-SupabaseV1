@@ -97,3 +97,18 @@
   visibility: visible;
   opacity: 1;
 }
+
+/* Custom Scrollbar for Elegance */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(200, 245, 102, 0.1);
+  border-radius: 10px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(200, 245, 102, 0.25);
+}
