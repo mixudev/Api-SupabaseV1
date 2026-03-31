@@ -12,6 +12,9 @@ const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 let allData = [];
+let filteredData = [];
+let currentPage = 1;
+const ITEMS_PER_PAGE = 20;
 
 // ═══════════════════════════════════════════
 //  INIT
@@ -130,7 +133,31 @@ function showLoginErr(msg) {
   el.classList.remove('hidden');
 }
 
-async function handleLogout() {
+function handleLogout() {
+  const overlay = document.getElementById('modal-logout');
+  if(overlay) {
+    overlay.classList.remove('hidden');
+    overlay.classList.add('flex', 'active');
+    document.body.style.overflow = 'hidden';
+  } else {
+    confirmLogout();
+  }
+}
+
+function closeLogoutModal() {
+  const overlay = document.getElementById('modal-logout');
+  if(overlay) {
+    overlay.classList.remove('active');
+    setTimeout(() => {
+      overlay.classList.add('hidden');
+      overlay.classList.remove('flex');
+    }, 300);
+    document.body.style.overflow = '';
+  }
+}
+
+async function confirmLogout() {
+  closeLogoutModal();
   await sb.auth.signOut();
   document.getElementById('app').classList.add('hidden');
   document.getElementById('app').style.display = '';
@@ -179,15 +206,6 @@ async function loadData() {
 
   allData = data || [];
 
-  const devices  = new Set(allData.map(r => r.device_id)).size;
-  const okCount  = allData.filter(r => r.status?.toLowerCase() === 'ok').length;
-  const errCount = allData.filter(r => r.status?.toLowerCase() === 'error').length;
-
-  document.getElementById('stat-total').textContent   = allData.length;
-  document.getElementById('stat-devices').textContent = devices;
-  document.getElementById('stat-ok').textContent      = okCount;
-  document.getElementById('stat-err').textContent     = errCount;
-
   const now = new Date();
   document.getElementById('last-updated').textContent =
     `// diperbarui ${now.toLocaleTimeString('id-ID')} — ${allData.length} log ditemukan`;
@@ -197,16 +215,27 @@ async function loadData() {
 
 function applyFilter() {
   const q = document.getElementById('filter-device')?.value.toLowerCase() || '';
-  const s = document.getElementById('filter-status')?.value.toLowerCase() || '';
-  renderTable(allData.filter(r =>
-    (!q || r.device_id?.toLowerCase().includes(q)) &&
-    (!s || r.status?.toLowerCase() === s)
-  ));
+  const d = document.getElementById('filter-date')?.value || '';
+  
+  filteredData = allData.filter(r => {
+    const matchQ = !q || r.device_id?.toLowerCase().includes(q);
+    let matchD = true;
+    if (d && r.received_at) matchD = r.received_at.startsWith(d);
+    return matchQ && matchD;
+  });
+  
+  currentPage = 1;
+  renderTable();
 }
 
-function renderTable(data) {
+function changePage(page) {
+    currentPage = page;
+    renderTable();
+}
+
+function renderTable() {
   const c = document.getElementById('table-container');
-  if (!data.length) {
+  if (!filteredData.length) {
     c.innerHTML = `<div class="py-16 text-center font-mono text-muted text-[0.85rem]">Tidak ada data yang cocok.</div>`;
     return;
   }
@@ -243,11 +272,16 @@ function renderTable(data) {
       </thead>
       <tbody>`;
 
-  data.forEach((r, i) => {
-    const realIndex = allData.findIndex(item => item.id === r.id);
+  const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
+  const startIdx = (currentPage - 1) * ITEMS_PER_PAGE;
+  const paginatedData = filteredData.slice(startIdx, startIdx + ITEMS_PER_PAGE);
+
+  paginatedData.forEach((r, i) => {
+    const realIdx = startIdx + i + 1;
+    const allDataIndex = allData.findIndex(item => item.id === r.id);
     html += `
       <tr class="border-b border-[#1f1f1f] last:border-0 hover:bg-[rgba(200,245,102,0.03)] transition-colors">
-        <td class="px-4 py-[0.9rem] font-mono text-[0.75rem] text-muted font-light">${i + 1}</td>
+        <td class="px-4 py-[0.9rem] font-mono text-[0.75rem] text-muted font-light">${realIdx}</td>
         <td class="px-4 py-[0.9rem]"><strong class="font-medium">${r.device_id || '—'}</strong></td>
         <td class="px-4 py-[0.9rem]">${badge(r.status)}</td>
         <td class="px-4 py-[0.9rem] font-mono text-[0.75rem] text-muted">${r.files_count ?? '—'}</td>
@@ -256,7 +290,7 @@ function renderTable(data) {
         <td class="px-4 py-[0.9rem]">${fmt(r.encrypted_key, 12)}</td>
         <td class="px-4 py-[0.9rem]">${fmtD(r.received_at)}</td>
         <td class="px-4 py-[0.9rem] text-center">
-          <button title="Lihat Detail" onclick="showDetails(${realIndex})"
+          <button title="Lihat Detail" onclick="showDetails(${allDataIndex})"
             class="bg-transparent border border-border text-muted p-[0.4rem] rounded-lg cursor-pointer transition-all hover:border-accent hover:text-accent flex items-center justify-center mx-auto"
             onmouseover="this.style.background='rgba(200,245,102,0.05)'"
             onmouseout="this.style.background='transparent'">
@@ -269,6 +303,20 @@ function renderTable(data) {
   });
 
   html += `</tbody></table>`;
+  
+  if (totalPages > 1) {
+    html += `
+      <div class="px-6 py-4 border-t border-border bg-surface flex items-center justify-between">
+        <span class="font-mono text-[0.7rem] text-muted">Menampilkan ${startIdx + 1} - ${Math.min(startIdx + ITEMS_PER_PAGE, filteredData.length)} dari ${filteredData.length}</span>
+        <div class="flex items-center gap-2">
+          <button onclick="changePage(${currentPage - 1})" ${currentPage === 1 ? 'disabled class="px-3 py-1 font-mono text-[0.7rem] border border-border text-muted/30 cursor-not-allowed"' : 'class="px-3 py-1 font-mono text-[0.7rem] border border-border text-muted hover:text-[#f0ede6] hover:border-accent transition-all"'}>Prev</button>
+          <span class="font-mono text-[0.7rem] text-[#f0ede6] px-2">${currentPage} / ${totalPages}</span>
+          <button onclick="changePage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled class="px-3 py-1 font-mono text-[0.7rem] border border-border text-muted/30 cursor-not-allowed"' : 'class="px-3 py-1 font-mono text-[0.7rem] border border-border text-muted hover:text-[#f0ede6] hover:border-accent transition-all"'}>Next</button>
+        </div>
+      </div>
+    `;
+  }
+
   c.innerHTML = html;
 }
 

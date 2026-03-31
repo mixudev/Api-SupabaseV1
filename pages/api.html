@@ -115,7 +115,7 @@
               <span class="text-[0.65rem] font-mono text-muted uppercase">cURL</span>
               <button onclick="copyToClipboard(document.getElementById('code-curl').textContent, this)" class="text-[0.65rem] font-mono text-accent hover:underline">Copy</button>
             </div>
-<pre id="code-curl" class="font-mono text-[0.7rem] text-muted overflow-x-auto">curl -X POST https://${window.location.host}/api/device \
+<pre id="code-curl" class="font-mono text-[0.7rem] text-muted overflow-x-auto">curl -X POST https://<span class="host-name"></span>/api/device \
   -H "x-api-key: YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -152,7 +152,7 @@
 <pre id="code-py" class="font-mono text-[0.7rem] text-muted overflow-x-auto">import requests
 
 res = requests.post(
-  'https://${window.location.host}/api/device',
+  'https://<span class="host-name"></span>/api/device',
   headers={
     'x-api-key': 'YOUR_API_KEY',
     'Content-Type': 'application/json'
@@ -169,3 +169,9 @@ res = requests.post(
 
   </div>
 </main>
+
+<script>
+  document.querySelectorAll('.host-name').forEach(el => {
+    el.textContent = window.location.host;
+  });
+</script>
