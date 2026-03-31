@@ -10,16 +10,16 @@
       theme: {
         extend: {
           colors: {
-            bg:       'var(--bg)',
-            surface:  'var(--surface)',
-            surface2: 'var(--surface2)',
-            border:   'var(--border)',
-            accent:   'var(--accent)',
-            accent2:  'var(--accent2)',
-            muted:    'var(--muted)',
-            danger:   'var(--danger)',
-            warn:     'var(--warn)',
-            ok:       'var(--ok)',
+            bg:       '#0d0d0d',
+            surface:  '#161616',
+            surface2: '#1e1e1e',
+            border:   '#2a2a2a',
+            accent:   '#c8f566',
+            accent2:  '#66d4f5',
+            muted:    '#6b6b6b',
+            danger:   '#ff6b6b',
+            warn:     '#f5a623',
+            ok:       '#4ade80',
           },
           fontFamily: {
             serif:  ['"Instrument Serif"', 'serif'],
@@ -30,18 +30,7 @@
         }
       }
     }
-
-    // Theme Early Initialization
-    (function() {
-      const t = localStorage.getItem('theme') || 'system';
-      if (t === 'dark' || (t === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-      } else if (t === 'light') {
-        document.documentElement.setAttribute('data-theme', 'light');
-      }
-    })();
   </script>
-  <link rel="stylesheet" href="css/colors.css" />
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="css/animations.css" />
@@ -63,7 +52,6 @@
 
   <!-- MODAL -->
   <div id="modal-details-partial"></div>
-  <div id="confirm-modal-partial"></div>
 
   <!-- PARTIALS LOADER -->
   <script src="js/partials.js"></script>
