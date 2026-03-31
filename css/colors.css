@@ -1,0 +1,38 @@
+/* css/colors.css */
+
+:root {
+  /* DARK THEME (DEFAULT) */
+  --bg: #0d0d0d;
+  --surface: #161616;
+  --surface2: #1e1e1e;
+  --border: #2a2a2a;
+  --accent: #c8f566;
+  --accent2: #66d4f5;
+  --muted: #6b6b6b;
+  --danger: #ff6b6b;
+  --warn: #f5a623;
+  --ok: #4ade80;
+  --text: #f0ede6;
+}
+
+[data-theme='light'] {
+  /* LIGHT THEME */
+  --bg: #f9f9f7;
+  --surface: #ffffff;
+  --surface2: #f0f0ee;
+  --border: #e2e2e0;
+  --accent: #a3cc46;
+  --accent2: #38bdf8;
+  --muted: #94a3b8;
+  --danger: #ef4444;
+  --warn: #f59e0b;
+  --ok: #22c55e;
+  --text: #1a1a18;
+}
+
+/* Base Body Styles */
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}

@@ -6,51 +6,57 @@
   </div>
   <div class="font-mono text-[0.75rem] text-muted mb-10" id="last-updated">// memuat data...</div>
 
-  <!-- Stats -->
-  <div class="grid gap-px mb-8 border border-border bg-border" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr))">
-    <div class="bg-surface p-6">
-      <div class="font-mono text-[0.68rem] uppercase tracking-[0.1em] text-muted mb-2">Total Log</div>
-      <div class="font-serif text-[2rem] tracking-tight" id="stat-total">—</div>
-    </div>
-    <div class="bg-surface p-6">
-      <div class="font-mono text-[0.68rem] uppercase tracking-[0.1em] text-muted mb-2">Device Unik</div>
-      <div class="font-serif text-[2rem] tracking-tight" id="stat-devices">—</div>
-    </div>
-    <div class="bg-surface p-6">
-      <div class="font-mono text-[0.68rem] uppercase tracking-[0.1em] text-muted mb-2">Status OK</div>
-      <div class="font-serif text-[2rem] tracking-tight text-accent" id="stat-ok">—</div>
-    </div>
-    <div class="bg-surface p-6">
-      <div class="font-mono text-[0.68rem] uppercase tracking-[0.1em] text-muted mb-2">Status Error</div>
-      <div class="font-serif text-[2rem] tracking-tight text-danger" id="stat-err">—</div>
+  <div id="bulk-actions" class="hidden mb-6 anim-fade-up">
+    <div class="bg-danger/5 border border-danger/20 p-4 rounded-xl flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-full bg-danger/10 text-danger flex items-center justify-center">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+        </div>
+        <span class="font-mono text-[0.75rem] text-danger uppercase tracking-wider font-bold">
+          <span id="selected-count">0</span> Item Terpilih
+        </span>
+      </div>
+      <button onclick="confirmBulkDelete()" 
+        class="bg-danger text-white px-6 py-2 rounded-lg font-mono text-[0.7rem] uppercase tracking-wider font-bold hover:opacity-90 transition-opacity cursor-pointer">
+        Hapus Masal
+      </button>
     </div>
   </div>
 
-  <!-- Filters -->
   <div class="flex gap-4 mb-6 flex-wrap">
-    <input
-      class="bg-surface border border-border text-[#f0ede6] px-4 py-[0.6rem] font-mono text-[0.8rem] outline-none transition-colors focus:border-accent placeholder:text-muted flex-1 min-w-[200px]"
-      id="filter-device"
-      placeholder="🔍 Cari device_id..."
-      oninput="applyFilter()"
-    />
-    <select
-      class="bg-surface border border-border text-[#f0ede6] px-4 py-[0.6rem] font-mono text-[0.8rem] outline-none cursor-pointer"
-      id="filter-status"
-      onchange="applyFilter()"
-    >
-      <option value="">Semua Status</option>
-      <option value="ok">OK</option>
-      <option value="error">Error</option>
-      <option value="warn">Warning</option>
-    </select>
+    <div class="relative flex-1">
+      <input
+        class="w-full bg-surface border border-border text-text px-10 py-[0.7rem] rounded-xl font-mono text-[0.8rem] outline-none transition-all focus:border-accent focus:ring-1 focus:ring-accent/20 placeholder:text-muted"
+        id="filter-device"
+        placeholder="Cari Device ID..."
+        oninput="applyFilter()"
+      />
+      <div class="absolute left-4 top-1/2 -translate-y-1/2 text-muted">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      </div>
+    </div>
   </div>
 
   <!-- Table -->
-  <div class="border border-border overflow-auto" id="table-container">
-    <div class="py-16 text-center font-mono text-muted text-[0.85rem]">
-      <div class="loading-dots"><span></span><span></span><span></span></div>
-      <div class="mt-4">Memuat data...</div>
+  <div class="border border-border rounded-2xl overflow-hidden bg-surface shadow-sm mb-6" id="table-container">
+     <!-- Content injected by JS -->
+  </div>
+
+  <!-- Pagination -->
+  <div id="pagination" class="flex items-center justify-between px-2 font-mono text-[0.7rem]">
+    <div class="text-muted">
+      Showing <span id="pag-start">0</span>-<span id="pag-end">0</span> of <span id="pag-total">0</span> logs
+    </div>
+    <div class="flex items-center gap-2">
+      <button onclick="prevPage()" id="btn-prev" class="p-2 border border-border rounded-lg text-muted hover:text-accent hover:border-accent disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      </button>
+      <div id="pag-numbers" class="flex gap-1">
+        <!-- Page numbers go here -->
+      </div>
+      <button onclick="nextPage()" id="btn-next" class="p-2 border border-border rounded-lg text-muted hover:text-accent hover:border-accent disabled:opacity-30 disabled:pointer-events-none transition-all cursor-pointer">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+      </button>
     </div>
   </div>
 

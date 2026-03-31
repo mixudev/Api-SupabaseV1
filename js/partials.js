@@ -8,6 +8,7 @@ const PARTIALS = [
   { url: 'partials/login.html',   target: 'login-page' },
   { url: 'partials/header.html',  target: 'header-partial' },
   { url: 'partials/modal.html',   target: 'modal-details-partial' },
+  { url: 'partials/confirm.html', target: 'confirm-modal-partial' },
   { url: 'pages/dashboard.html',  target: 'page-dashboard' },
   { url: 'pages/keyvault.html',   target: 'page-keyvault' },
   { url: 'pages/api.html',        target: 'page-api' },

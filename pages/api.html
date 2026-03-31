@@ -130,7 +130,7 @@
               <span class="text-[0.65rem] font-mono text-muted uppercase">JavaScript</span>
               <button onclick="copyToClipboard(document.getElementById('code-js').textContent, this)" class="text-[0.65rem] font-mono text-accent hover:underline">Copy</button>
             </div>
-<pre id="code-js" class="font-mono text-[0.7rem] text-muted overflow-x-auto">fetch('/api/device', {
+<pre id="code-js" class="font-mono text-[0.7rem] text-muted overflow-x-auto">fetch('https://[HOST]/api/device', {
   method: 'POST',
   headers: {
     'x-api-key': 'YOUR_API_KEY',
@@ -152,7 +152,7 @@
 <pre id="code-py" class="font-mono text-[0.7rem] text-muted overflow-x-auto">import requests
 
 res = requests.post(
-  'https://${window.location.host}/api/device',
+  'https://[HOST]/api/device',
   headers={
     'x-api-key': 'YOUR_API_KEY',
     'Content-Type': 'application/json'

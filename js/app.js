@@ -11,12 +11,20 @@ const SUPABASE_URL      = 'https://eguakeiaubrirdztacvd.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVndWFrZWlhdWJyaXJkenRhY3ZkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3Nzk2NjQsImV4cCI6MjA5MDM1NTY2NH0.OrxGBVhabBZr_2KdhPiqdIbwH4c4JL1D0vEHjxtiz8U';
 
 const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-let allData = [];
+
+// State
+let allData      = [];
+let filteredData = [];
+let selectedIds  = [];
+let currentPage  = 1;
+const itemsPerPage = 8;
+let theme        = localStorage.getItem('theme') || 'system';
 
 // ═══════════════════════════════════════════
 //  INIT
 // ═══════════════════════════════════════════
 document.addEventListener('partials:ready', () => {
+  initTheme();
   bindPasswordEnter();
   checkSession();
 });
@@ -36,6 +44,9 @@ function switchTab(tab) {
     page.classList.remove('anim-fade-up');
     void page.offsetWidth;
     (page.querySelector('main') || page.querySelector('[id="kv-wrap"]'))?.classList.add('anim-fade-up');
+    
+    // Custom dynamic page init
+    if (tab === 'api') initApiDocs();
   }
 
   // Sync mobile nav highlight
@@ -153,6 +164,16 @@ async function checkSession() {
   if (session) showApp(session.user);
 }
 
+function confirmLogout() {
+  showConfirm({
+    title: 'Konfirmasi Keluar',
+    msg: 'Apakah Anda yakin ingin mengakhiri sesi ini?',
+    icon: 'logout',
+    btnOk: 'Keluar Sekarang',
+    onConfirm: handleLogout
+  });
+}
+
 // ═══════════════════════════════════════════
 //  DASHBOARD DATA
 // ═══════════════════════════════════════════
@@ -170,7 +191,7 @@ async function loadData() {
     .from('device_logs')
     .select('*')
     .order('received_at', { ascending: false })
-    .limit(200);
+    .limit(500);
 
   if (error) {
     container.innerHTML = `<div class="py-16 text-center font-mono text-danger text-[0.85rem]">⚠ ${error.message}</div>`;
@@ -178,98 +199,89 @@ async function loadData() {
   }
 
   allData = data || [];
-
-  const devices  = new Set(allData.map(r => r.device_id)).size;
-  const okCount  = allData.filter(r => r.status?.toLowerCase() === 'ok').length;
-  const errCount = allData.filter(r => r.status?.toLowerCase() === 'error').length;
-
-  document.getElementById('stat-total').textContent   = allData.length;
-  document.getElementById('stat-devices').textContent = devices;
-  document.getElementById('stat-ok').textContent      = okCount;
-  document.getElementById('stat-err').textContent     = errCount;
-
   const now = new Date();
-  document.getElementById('last-updated').textContent =
-    `// diperbarui ${now.toLocaleTimeString('id-ID')} — ${allData.length} log ditemukan`;
+  const lastUpdated = document.getElementById('last-updated');
+  if (lastUpdated) {
+    lastUpdated.textContent = `// diperbarui ${now.toLocaleTimeString('id-ID')} — ${allData.length} records`;
+  }
 
   applyFilter();
 }
 
 function applyFilter() {
   const q = document.getElementById('filter-device')?.value.toLowerCase() || '';
-  const s = document.getElementById('filter-status')?.value.toLowerCase() || '';
-  renderTable(allData.filter(r =>
-    (!q || r.device_id?.toLowerCase().includes(q)) &&
-    (!s || r.status?.toLowerCase() === s)
-  ));
+  filteredData = allData.filter(r => !q || r.device_id?.toLowerCase().includes(q));
+  currentPage = 1;
+  selectedIds = [];
+  updateBulkUI();
+  renderTable();
 }
 
-function renderTable(data) {
+function renderTable() {
   const c = document.getElementById('table-container');
-  if (!data.length) {
+  if (!c) return;
+
+  if (!filteredData.length) {
     c.innerHTML = `<div class="py-16 text-center font-mono text-muted text-[0.85rem]">Tidak ada data yang cocok.</div>`;
+    updatePaginationUI();
     return;
   }
 
-  const badge = s => {
-    const sl  = (s || '').toLowerCase();
-    const map = { ok: 'border-accent text-accent', error: 'border-danger text-danger', warn: 'border-warn text-warn' };
-    const cls = map[sl] || 'border-border text-muted';
-    return `<span class="inline-block px-[0.7rem] py-[0.2rem] text-[0.68rem] font-mono rounded-full border whitespace-nowrap ${cls}">${s || '—'}</span>`;
-  };
+  // Slice for pagination
+  const start = (currentPage - 1) * itemsPerPage;
+  const end   = start + itemsPerPage;
+  const pageData = filteredData.slice(start, end);
 
-  const fmt = (v, m = 20) => {
-    if (v === null || v === undefined) return `<span class="font-mono text-[0.75rem] text-muted">null</span>`;
+  const fmt = (v, m = 16) => {
+    if (v === null || v === undefined) return `<span class="opacity-30">null</span>`;
     const str = String(v);
-    return str.length > m
-      ? `<span class="block max-w-[160px] overflow-hidden text-ellipsis whitespace-nowrap font-mono text-[0.75rem] text-muted" title="${str}">${str.substring(0, m)}…</span>`
-      : `<span class="font-mono text-[0.75rem] text-muted">${str}</span>`;
+    return str.length > m ? `<span title="${str}">${str.substring(0, m)}…</span>` : str;
   };
 
   const fmtD = d => {
     if (!d) return '—';
     const dt = new Date(d);
-    return `<span class="font-mono text-[0.75rem] text-muted">${dt.toLocaleDateString('id-ID')} ${dt.toLocaleTimeString('id-ID')}</span>`;
+    return `<span class="whitespace-nowrap">${dt.toLocaleDateString('id-ID')} ${dt.toLocaleTimeString('id-ID', {hour:'2-digit',minute:'2-digit'})}</span>`;
   };
 
   let html = `
-    <table class="w-full border-collapse text-[0.85rem]">
-      <thead class="bg-surface border-b border-border">
+    <table class="w-full border-collapse text-[0.75rem]">
+      <thead class="bg-surface2/50 border-b border-border">
         <tr>
-          ${['#','Device ID','Status','Files','Version','Ephemeral Pub','Encrypted Key','Diterima','Action']
-            .map(h => `<th class="text-left px-4 py-[0.9rem] font-mono text-[0.68rem] tracking-[0.1em] uppercase text-muted font-normal whitespace-nowrap">${h}</th>`)
+          <th class="w-12 px-4 py-4"><input type="checkbox" onchange="toggleSelectAll(this.checked)" ${isAllSelected() ? 'checked' : ''} class="accent-accent scale-110"></th>
+          ${['Device ID','Version','Public Key','Encrypted Key','Received','Action']
+            .map(h => `<th class="text-left px-4 py-4 font-mono text-[0.65rem] tracking-[0.1em] uppercase text-muted font-normal whitespace-nowrap">${h}</th>`)
             .join('')}
         </tr>
       </thead>
-      <tbody>`;
+      <tbody class="divide-y divide-border/30">`;
 
-  data.forEach((r, i) => {
-    const realIndex = allData.findIndex(item => item.id === r.id);
+  pageData.forEach((r) => {
+    const isChecked = selectedIds.includes(r.id);
     html += `
-      <tr class="border-b border-[#1f1f1f] last:border-0 hover:bg-[rgba(200,245,102,0.03)] transition-colors">
-        <td class="px-4 py-[0.9rem] font-mono text-[0.75rem] text-muted font-light">${i + 1}</td>
-        <td class="px-4 py-[0.9rem]"><strong class="font-medium">${r.device_id || '—'}</strong></td>
-        <td class="px-4 py-[0.9rem]">${badge(r.status)}</td>
-        <td class="px-4 py-[0.9rem] font-mono text-[0.75rem] text-muted">${r.files_count ?? '—'}</td>
-        <td class="px-4 py-[0.9rem] font-mono text-[0.75rem] text-muted">${r.version || '—'}</td>
-        <td class="px-4 py-[0.9rem]">${fmt(r.ephemeral_pub, 12)}</td>
-        <td class="px-4 py-[0.9rem]">${fmt(r.encrypted_key, 12)}</td>
-        <td class="px-4 py-[0.9rem]">${fmtD(r.received_at)}</td>
-        <td class="px-4 py-[0.9rem] text-center">
-          <button title="Lihat Detail" onclick="showDetails(${realIndex})"
-            class="bg-transparent border border-border text-muted p-[0.4rem] rounded-lg cursor-pointer transition-all hover:border-accent hover:text-accent flex items-center justify-center mx-auto"
-            onmouseover="this.style.background='rgba(200,245,102,0.05)'"
-            onmouseout="this.style.background='transparent'">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
-            </svg>
-          </button>
+      <tr class="group hover:bg-accent/5 transition-colors ${isChecked ? 'bg-accent/[0.03]' : ''}">
+        <td class="px-4 py-4 text-center"><input type="checkbox" onchange="toggleSelect('${r.id}')" ${isChecked ? 'checked' : ''} class="accent-accent scale-110"></td>
+        <td class="px-4 py-4 font-medium text-text">${r.device_id || '—'}</td>
+        <td class="px-4 py-4 font-mono text-muted opacity-80">${r.version || '—'}</td>
+        <td class="px-4 py-4 font-mono text-muted opacity-60">${fmt(r.ephemeral_pub)}</td>
+        <td class="px-4 py-4 font-mono text-muted opacity-60">${fmt(r.encrypted_key)}</td>
+        <td class="px-4 py-4 text-muted">${fmtD(r.received_at)}</td>
+        <td class="px-4 py-4">
+          <div class="flex items-center gap-2">
+            <button onclick="showDetails(${allData.findIndex(x=>x.id===r.id)})" class="p-2 border border-border rounded-lg text-muted hover:border-accent hover:text-accent transition-all cursor-pointer">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            </button>
+            <button onclick="confirmDelete('${r.id}')" class="p-2 border border-border rounded-lg text-muted hover:border-danger hover:text-danger transition-all cursor-pointer">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            </button>
+          </div>
         </td>
       </tr>`;
   });
 
   html += `</tbody></table>`;
   c.innerHTML = html;
+  updatePaginationUI();
 }
 
 // ═══════════════════════════════════════════
@@ -358,11 +370,14 @@ async function handleRevealKey(btn) {
     navigator.clipboard.writeText(key).then(() => {
       btn.textContent = 'Copied!';
       btn.classList.add('text-ok');
+      
+      // Timer to hide key
       setTimeout(() => {
+        display.innerHTML = `x-api-key: ••••••••••••••••••••••••••••••••`;
         btn.textContent = originalText;
         btn.classList.remove('text-ok');
         btn.disabled = false;
-      }, 2000);
+      }, 30000); // 30 seconds
     });
 
   } catch (err) {
@@ -372,4 +387,189 @@ async function handleRevealKey(btn) {
     btn.disabled    = false;
   }
 }
+
+// ═══════════════════════════════════════════
+//  THEME LOGIC
+// ═══════════════════════════════════════════
+function initTheme() {
+  applyTheme(theme);
+}
+
+function applyTheme(t) {
+  const root = document.documentElement;
+  if (t === 'system') {
+    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    root.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  } else {
+    root.setAttribute('data-theme', t);
+  }
+  
+  // Update icons
+  document.getElementById('theme-icon-dark')?.classList.add('hidden');
+  document.getElementById('theme-icon-light')?.classList.add('hidden');
+  document.getElementById('theme-icon-system')?.classList.add('hidden');
+  document.getElementById(`theme-icon-${t}`)?.classList.remove('hidden');
+}
+
+function cycleTheme() {
+  const modes = ['light', 'dark', 'system'];
+  theme = modes[(modes.indexOf(theme) + 1) % modes.length];
+  localStorage.setItem('theme', theme);
+  applyTheme(theme);
+}
+
+// ═══════════════════════════════════════════
+//  PAGINATION & SELECTION
+// ═══════════════════════════════════════════
+function updatePaginationUI() {
+  const pag = document.getElementById('pagination');
+  if (!pag) return;
+  
+  if (filteredData.length <= itemsPerPage) {
+    pag.classList.add('hidden');
+    return;
+  }
+  pag.classList.remove('hidden');
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const start = (currentPage - 1) * itemsPerPage + 1;
+  const end   = Math.min(currentPage * itemsPerPage, filteredData.length);
+
+  document.getElementById('pag-start').textContent = start;
+  document.getElementById('pag-end').textContent   = end;
+  document.getElementById('pag-total').textContent = filteredData.length;
+
+  document.getElementById('btn-prev').disabled = currentPage === 1;
+  document.getElementById('btn-next').disabled = currentPage === totalPages;
+
+  let numbersHtml = '';
+  for (let i = 1; i <= totalPages; i++) {
+    if (totalPages > 5 && i > 1 && i < totalPages && Math.abs(i - currentPage) > 1) {
+       if (i === 2 || i === totalPages - 1) numbersHtml += `<span class="px-2 text-muted opacity-30">...</span>`;
+       continue;
+    }
+    numbersHtml += `
+      <button onclick="gotoPage(${i})" class="w-8 h-8 rounded-lg border ${i===currentPage ? 'bg-accent text-bg border-accent font-bold' : 'border-border text-muted hover:border-accent hover:text-accent'} transition-all cursor-pointer">${i}</button>
+    `;
+  }
+  document.getElementById('pag-numbers').innerHTML = numbersHtml;
+}
+
+function gotoPage(n) { currentPage = n; renderTable(); window.scrollTo({top:0, behavior:'smooth'}); }
+function prevPage() { if (currentPage > 1) gotoPage(currentPage - 1); }
+function nextPage() { if (currentPage * itemsPerPage < filteredData.length) gotoPage(currentPage + 1); }
+
+function toggleSelect(id) {
+  if (selectedIds.includes(id)) selectedIds = selectedIds.filter(x => x !== id);
+  else selectedIds.push(id);
+  updateBulkUI();
+  renderTable();
+}
+
+function toggleSelectAll(checked) {
+  const start = (currentPage - 1) * itemsPerPage;
+  const pageIds = filteredData.slice(start, start + itemsPerPage).map(r => r.id);
+  if (checked) {
+    pageIds.forEach(id => { if(!selectedIds.includes(id)) selectedIds.push(id); });
+  } else {
+    selectedIds = selectedIds.filter(id => !pageIds.includes(id));
+  }
+  updateBulkUI();
+  renderTable();
+}
+
+function isAllSelected() {
+  const start = (currentPage - 1) * itemsPerPage;
+  const pageIds = filteredData.slice(start, start + itemsPerPage).map(r => r.id);
+  return pageIds.length > 0 && pageIds.every(id => selectedIds.includes(id));
+}
+
+function updateBulkUI() {
+  const bar = document.getElementById('bulk-actions');
+  const count = document.getElementById('selected-count');
+  if (!bar || !count) return;
+  
+  if (selectedIds.length > 0) {
+    bar.classList.remove('hidden');
+    count.textContent = selectedIds.length;
+  } else {
+    bar.classList.add('hidden');
+  }
+}
+
+// ═══════════════════════════════════════════
+//  DELETE ACTIONS
+// ═══════════════════════════════════════════
+function confirmDelete(id) {
+  showConfirm({
+    title: 'Hapus Log',
+    msg: 'Apakah Anda yakin ingin menghapus log ini secara permanen?',
+    onConfirm: async () => {
+      const { error } = await sb.from('device_logs').delete().eq('id', id);
+      if (error) alert('Error: ' + error.message);
+      else loadData();
+    }
+  });
+}
+
+function confirmBulkDelete() {
+  showConfirm({
+    title: 'Hapus Masal',
+    msg: `Apakah Anda yakin ingin menghapus ${selectedIds.length} log terpilih secara permanen?`,
+    onConfirm: async () => {
+      const { error } = await sb.from('device_logs').delete().in('id', selectedIds);
+      if (error) alert('Error: ' + error.message);
+      else {
+        selectedIds = [];
+        loadData();
+      }
+    }
+  });
+}
+
+// ═══════════════════════════════════════════
+//  CONFIRM MODAL HANDLER
+// ═══════════════════════════════════════════
+let _onConfirm = null;
+
+function showConfirm({ title, msg, icon, btnOk, onConfirm }) {
+  const modal = document.getElementById('modal-confirm');
+  if (!modal) return;
+  
+  document.getElementById('confirm-title').textContent = title || 'Konfirmasi';
+  document.getElementById('confirm-msg').textContent   = msg || '';
+  document.getElementById('confirm-btn-ok').textContent = btnOk || 'Ya, Lanjutkan';
+  _onConfirm = onConfirm;
+  
+  modal.classList.remove('hidden');
+  modal.classList.add('flex');
+}
+
+function closeConfirm() {
+  const modal = document.getElementById('modal-confirm');
+  modal.classList.add('hidden');
+  modal.classList.remove('flex');
+  _onConfirm = null;
+}
+
+document.getElementById('confirm-btn-ok')?.addEventListener('click', () => {
+  if (_onConfirm) _onConfirm();
+  closeConfirm();
+});
+
+// ═══════════════════════════════════════════
+//  API DOCS INIT
+// ═══════════════════════════════════════════
+function initApiDocs() {
+  const host = window.location.host;
+  const curl = document.getElementById('code-curl');
+  const js   = document.getElementById('code-js');
+  const py   = document.getElementById('code-py');
+  
+  if (curl) curl.textContent = curl.textContent.replace('[HOST]', host).replace('${window.location.host}', host);
+  if (js)   js.textContent   = js.textContent.replace('[HOST]', host);
+  if (py)   py.textContent   = py.textContent.replace('[HOST]', host);
+}
+
+
 
