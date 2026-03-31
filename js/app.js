@@ -25,7 +25,6 @@ let theme        = localStorage.getItem('theme') || 'system';
 // ═══════════════════════════════════════════
 document.addEventListener('partials:ready', () => {
   initTheme();
-  initModals();
   bindPasswordEnter();
   checkSession();
 });
@@ -223,14 +222,7 @@ function renderTable() {
   if (!c) return;
 
   if (!filteredData.length) {
-    c.innerHTML = `
-      <div class="py-20 text-center flex flex-col items-center justify-center anim-fade-up">
-        <div class="w-16 h-16 rounded-3xl bg-surface2 flex items-center justify-center text-text-dim/20 mb-4 border border-border-subtle shadow-inner">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        </div>
-        <div class="font-serif text-[1.4rem] text-text-dim opacity-40">Tidak ada data ditemukan</div>
-        <button onclick="document.getElementById('filter-device').value=''; applyFilter();" class="mt-4 text-accent text-[0.7rem] font-mono uppercase tracking-widest hover:underline cursor-pointer">Reset Pencarian</button>
-      </div>`;
+    c.innerHTML = `<div class="py-16 text-center font-mono text-muted text-[0.85rem]">Tidak ada data yang cocok.</div>`;
     updatePaginationUI();
     return;
   }
@@ -240,72 +232,54 @@ function renderTable() {
   const end   = start + itemsPerPage;
   const pageData = filteredData.slice(start, end);
 
-  const fmt = (v, m = 14) => {
-    if (v === null || v === undefined) return `<span class="opacity-20">null</span>`;
+  const fmt = (v, m = 16) => {
+    if (v === null || v === undefined) return `<span class="opacity-30">null</span>`;
     const str = String(v);
-    return str.length > m ? `<span title="${str}" class="cursor-help transition-colors hover:text-accent">${str.substring(0, m)}…</span>` : str;
+    return str.length > m ? `<span title="${str}">${str.substring(0, m)}…</span>` : str;
   };
 
   const fmtD = d => {
     if (!d) return '—';
     const dt = new Date(d);
-    return `<span class="whitespace-nowrap tabular-nums opacity-60">${dt.toLocaleDateString('id-ID')} <span class="opacity-30 mx-0.5">•</span> ${dt.toLocaleTimeString('id-ID', {hour:'2-digit',minute:'2-digit'})}</span>`;
-  };
-
-  const badge = s => {
-    const sl = (s || '').toLowerCase();
-    const map = { 
-      ok:    'bg-ok/[0.08] text-ok border-ok/20', 
-      error: 'bg-danger/[0.08] text-danger border-danger/20', 
-      warn:  'bg-warn/[0.08] text-warn border-warn/20' 
-    };
-    const cls = map[sl] || 'bg-text-dim/[0.05] text-text-dim border-border-subtle';
-    return `<span class="inline-flex items-center px-3 py-1 rounded-full border text-[0.6rem] font-bold font-mono tracking-wider uppercase leading-none shadow-sm ${cls}">${s || 'none'}</span>`;
+    return `<span class="whitespace-nowrap">${dt.toLocaleDateString('id-ID')} ${dt.toLocaleTimeString('id-ID', {hour:'2-digit',minute:'2-digit'})}</span>`;
   };
 
   let html = `
-    <div class="overflow-x-auto">
-      <table class="w-full border-collapse text-[0.75rem]">
-        <thead class="bg-surface2/30 border-b border-border-subtle">
-          <tr>
-            <th class="w-14 px-6 py-5 text-center"><input type="checkbox" onchange="toggleSelectAll(this.checked)" ${isAllSelected() ? 'checked' : ''} class="accent-accent scale-125 rounded-md cursor-pointer"></th>
-            ${['ID Perangkat','Status Server','Versi','Public Key (Temp)','Action']
-              .map(h => `<th class="text-left px-6 py-5 font-mono text-[0.62rem] tracking-[0.15em] uppercase text-text-dim/60 font-bold whitespace-nowrap">${h}</th>`)
-              .join('')}
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-border-subtle/40">`;
+    <table class="w-full border-collapse text-[0.75rem]">
+      <thead class="bg-surface2/50 border-b border-border">
+        <tr>
+          <th class="w-12 px-4 py-4"><input type="checkbox" onchange="toggleSelectAll(this.checked)" ${isAllSelected() ? 'checked' : ''} class="accent-accent scale-110"></th>
+          ${['Device ID','Version','Public Key','Encrypted Key','Received','Action']
+            .map(h => `<th class="text-left px-4 py-4 font-mono text-[0.65rem] tracking-[0.1em] uppercase text-muted font-normal whitespace-nowrap">${h}</th>`)
+            .join('')}
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-border/30">`;
 
   pageData.forEach((r) => {
     const isChecked = selectedIds.includes(r.id);
     html += `
-      <tr class="group transition-all duration-300 ${isChecked ? 'bg-accent/[0.03]' : 'hover:bg-text-dim/[0.02]'}">
-        <td class="px-6 py-5 text-center opacity-40 group-hover:opacity-100 transition-opacity">
-          <input type="checkbox" onchange="toggleSelect('${r.id}')" ${isChecked ? 'checked' : ''} class="accent-accent scale-125 rounded-md cursor-pointer">
-        </td>
-        <td class="px-6 py-5">
-          <div class="flex flex-col">
-            <span class="font-sans font-bold text-text tracking-tight text-[0.85rem]">${r.device_id || 'UNKNOWN'}</span>
-            <span class="text-[0.62rem] font-mono text-text-dim/40 tracking-tighter mt-1 tabular-nums">${fmtD(r.received_at)}</span>
-          </div>
-        </td>
-        <td class="px-6 py-5">${badge(r.status)}</td>
-        <td class="px-6 py-5 font-mono text-text-dim/60 tabular-nums">${r.version || 'v1.0.0'}</td>
-        <td class="px-6 py-5 font-mono text-text-dim/40 text-[0.7rem]">${fmt(r.ephemeral_pub)}</td>
-        <td class="px-6 py-5">
-          <div class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity transform translate-x-2 group-hover:translate-x-0">
-            <button onclick="showDetails(${allData.findIndex(x=>x.id===r.id)})" class="w-9 h-9 flex items-center justify-center border border-border-subtle rounded-xl text-text-dim hover:border-accent hover:text-accent hover:bg-accent/5 transition-all cursor-pointer shadow-sm">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      <tr class="group hover:bg-accent/5 transition-colors ${isChecked ? 'bg-accent/[0.03]' : ''}">
+        <td class="px-4 py-4 text-center"><input type="checkbox" onchange="toggleSelect('${r.id}')" ${isChecked ? 'checked' : ''} class="accent-accent scale-110"></td>
+        <td class="px-4 py-4 font-medium text-text">${r.device_id || '—'}</td>
+        <td class="px-4 py-4 font-mono text-muted opacity-80">${r.version || '—'}</td>
+        <td class="px-4 py-4 font-mono text-muted opacity-60">${fmt(r.ephemeral_pub)}</td>
+        <td class="px-4 py-4 font-mono text-muted opacity-60">${fmt(r.encrypted_key)}</td>
+        <td class="px-4 py-4 text-muted">${fmtD(r.received_at)}</td>
+        <td class="px-4 py-4">
+          <div class="flex items-center gap-2">
+            <button onclick="showDetails(${allData.findIndex(x=>x.id===r.id)})" class="p-2 border border-border rounded-lg text-muted hover:border-accent hover:text-accent transition-all cursor-pointer">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
             </button>
-            <button onclick="confirmDelete('${r.id}')" class="w-9 h-9 flex items-center justify-center border border-border-subtle rounded-xl text-text-dim hover:border-danger hover:text-danger hover:bg-danger/5 transition-all cursor-pointer shadow-sm">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+            <button onclick="confirmDelete('${r.id}')" class="p-2 border border-border rounded-lg text-muted hover:border-danger hover:text-danger transition-all cursor-pointer">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
             </button>
           </div>
         </td>
       </tr>`;
   });
 
-  html += `</tbody></table></div>`;
+  html += `</tbody></table>`;
   c.innerHTML = html;
   updatePaginationUI();
 }
@@ -317,28 +291,21 @@ function showDetails(index) {
   const r = allData[index];
   if (!r) return;
 
-  const elId = id => document.getElementById(id);
-
-  if (elId('modal-device-id')) elId('modal-device-id').textContent = r.device_id || 'UNKNOWN DEVICE';
-  if (elId('modal-version'))   elId('modal-version').textContent   = r.version || 'v1.0.0';
-  if (elId('modal-timestamp')) elId('modal-timestamp').textContent = r.received_at ? new Date(r.received_at).toLocaleString('id-ID', {dateStyle:'long', timeStyle:'short'}) : '—';
-  if (elId('modal-pub-key'))   elId('modal-pub-key').textContent   = r.ephemeral_pub || '—';
-  if (elId('modal-enc-key'))   elId('modal-enc-key').textContent   = r.encrypted_key || '—';
+  document.getElementById('md-device-id').textContent = r.device_id || '—';
+  document.getElementById('md-version').textContent   = r.version || '—';
+  document.getElementById('md-files').textContent     = r.files_count ?? '—';
+  document.getElementById('md-date').textContent      = r.received_at ? new Date(r.received_at).toLocaleString('id-ID') : '—';
+  document.getElementById('md-pub-text').textContent  = r.ephemeral_pub || '—';
+  document.getElementById('md-key-text').textContent  = r.encrypted_key || '—';
 
   // Restore Reset
   if (typeof resetModalRestore === 'function') resetModalRestore();
 
-  const sl = (r.status || '').toLowerCase();
-  const map = { 
-    ok:    'bg-ok/[0.1] text-ok border-ok/30', 
-    error: 'bg-danger/[0.1] text-danger border-danger/30', 
-    warn:  'bg-warn/[0.1] text-warn border-warn/30' 
-  };
-  const cls = map[sl] || 'bg-text-dim/[0.05] text-text-dim border-border-subtle';
-  
-  if (elId('modal-status')) {
-    elId('modal-status').innerHTML = `<span class="px-3 py-1 rounded-full border text-[0.65rem] font-bold font-mono tracking-wider uppercase leading-none ${cls}">${r.status || 'none'}</span>`;
-  }
+  const sl  = (r.status || '').toLowerCase();
+  const map = { ok: 'border-accent text-accent', error: 'border-danger text-danger', warn: 'border-warn text-warn' };
+  const cls = map[sl] || 'border-border text-muted';
+  document.getElementById('md-status').innerHTML =
+    `<span class="inline-block px-[0.7rem] py-[0.2rem] text-[0.68rem] font-mono rounded-full border whitespace-nowrap ${cls}">${r.status || '—'}</span>`;
 
   const overlay = document.getElementById('modal-details');
   overlay.classList.remove('hidden');
@@ -585,12 +552,10 @@ function closeConfirm() {
   _onConfirm = null;
 }
 
-function initModals() {
-  document.getElementById('confirm-btn-ok')?.addEventListener('click', () => {
-    if (_onConfirm) _onConfirm();
-    closeConfirm();
-  });
-}
+document.getElementById('confirm-btn-ok')?.addEventListener('click', () => {
+  if (_onConfirm) _onConfirm();
+  closeConfirm();
+});
 
 // ═══════════════════════════════════════════
 //  API DOCS INIT

@@ -2,17 +2,17 @@
 <main class="flex-1 overflow-y-auto px-6 py-10 max-w-[1100px] mx-auto w-full">
   
   <header class="mb-12">
-    <div class="flex items-center gap-4 mb-4">
-      <div class="p-3 bg-accent/10 border border-border-subtle rounded-2xl text-accent shadow-inner">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <div class="flex items-center gap-3 mb-4">
+      <div class="p-2 bg-accent/10 border border-accent/20 rounded-lg text-accent">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
         </svg>
       </div>
-      <h1 class="text-[2.2rem] font-serif tracking-tight text-text">Dokumentasi API</h1>
+      <h1 class="text-[1.8rem] font-serif tracking-tight">API Documentation</h1>
     </div>
-    <p class="text-text-dim max-w-[600px] font-light leading-relaxed opacity-80">
-      Integrasikan perangkat Anda secara otomatis menggunakan endpoint terenkripsi kami. 
-      Semua request wajib menyertakan API Key yang valid.
+    <p class="text-muted max-w-[600px] font-light leading-relaxed">
+      Gunakan API kami untuk mengintegrasikan perangkat Anda secara otomatis ke sistem monitoring. 
+      Semua request memerlukan autentikasi melalui API Key.
     </p>
   </header>
 
@@ -21,19 +21,20 @@
     <!-- LEFT CONTENT -->
     <div class="lg:col-span-2 space-y-12">
       
+      <!-- AUTHENTICATION -->
       <section id="api-auth">
-        <h2 class="text-accent text-[0.7rem] font-mono uppercase tracking-[0.3em] mb-6 flex items-center gap-3 font-bold opacity-80">
-          <span class="w-1.5 h-1.5 bg-accent rounded-full shadow-[0_0_10px_rgba(139,92,246,0.5)]"></span>
-          Autentikasi
+        <h2 class="text-accent text-[0.85rem] font-mono uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+          <span class="w-1 h-1 bg-accent rounded-full"></span>
+          Authentication
         </h2>
-        <div class="bg-surface border border-border-subtle p-8 rounded-3xl shadow-xl shadow-black/5">
-          <p class="text-[0.9rem] text-text-dim mb-6 leading-relaxed">
-            Sertakan API Key dalam request header menggunakan field <code class="bg-accent/10 px-2 py-0.5 rounded text-accent font-mono text-[0.8rem]">x-api-key</code>.
+        <div class="bg-surface border border-border p-6 rounded-xl">
+          <p class="text-[0.9rem] text-muted mb-4">
+            Sertakan API Key Anda di dalam header setiap request menggunakan field <code>x-api-key</code>.
           </p>
-          <div class="bg-bg border border-border-subtle p-5 rounded-2xl font-mono text-[0.8rem] text-text-dim flex flex-col sm:flex-row items-center justify-between gap-4 group hover:border-accent/30 transition-all">
-            <span id="api-key-display" class="truncate max-w-full opacity-60">x-api-key: ••••••••••••••••••••••••••••••••</span>
+          <div class="bg-bg border border-border p-4 rounded-lg font-mono text-[0.8rem] text-muted flex flex-col sm:flex-row items-center justify-between gap-4 group">
+            <span id="api-key-display" class="truncate max-w-full">x-api-key: ••••••••••••••••••••••••••••••••</span>
             <button onclick="handleRevealKey(this)" 
-              class="whitespace-nowrap px-6 py-3 bg-accent/10 border border-accent/20 text-accent text-[0.7rem] font-bold uppercase tracking-widest rounded-xl hover:bg-accent hover:text-white transition-all cursor-pointer">
+              class="whitespace-nowrap px-4 py-2 border border-accent/30 text-accent text-[0.7rem] rounded-lg hover:bg-accent/10 transition-all cursor-pointer">
               Reveal & Copy Key
             </button>
           </div>
@@ -49,13 +50,13 @@
         
         <div class="space-y-6">
           <!-- DEVICE LOG -->
-          <div class="bg-surface border border-border-subtle overflow-hidden rounded-3xl shadow-xl shadow-black/5">
-            <div class="p-6 border-b border-border-subtle flex items-center justify-between bg-accent/[0.02]">
-              <div class="flex items-center gap-5">
-                <span class="px-4 py-1.5 bg-accent text-white font-mono text-[0.65rem] font-bold rounded-lg uppercase tracking-widest shadow-lg shadow-accent/20">POST</span>
-                <code class="font-mono text-[0.9rem] text-text border-b border-accent/30">/api/device</code>
+          <div class="bg-surface border border-border overflow-hidden rounded-xl">
+            <div class="p-5 border-b border-border flex items-center justify-between bg-[rgba(200,245,102,0.02)]">
+              <div class="flex items-center gap-4">
+                <span class="px-3 py-1 bg-accent text-[#0d0d0d] font-mono text-[0.7rem] font-bold rounded uppercase">POST</span>
+                <code class="font-mono text-[0.85rem] text-[#f0ede6]">/api/device</code>
               </div>
-              <span class="text-text-dim text-[0.7rem] font-mono opacity-50 uppercase tracking-tighter">Endpoint Perangkat</span>
+              <span class="text-muted text-[0.75rem] font-mono">Submit Log Perangkat</span>
             </div>
             
             <div class="p-6 space-y-6">
@@ -104,46 +105,63 @@
 
     <!-- RIGHT SIDEBAR (CODE EXAMPLES) -->
     <div class="space-y-8">
-      <div class="sticky top-24">
-        <h2 class="text-text-dim text-[0.7rem] font-mono uppercase tracking-[0.3em] mb-6 font-bold opacity-60">Request Examples</h2>
+      <div class="sticky top-20">
+        <h2 class="text-muted text-[0.75rem] font-mono uppercase tracking-[0.2em] mb-4">Example Requests</h2>
         
-        <div class="space-y-6">
+        <div class="space-y-4">
           <!-- CURL -->
-          <div class="bg-surface border border-border-subtle rounded-3xl p-6 shadow-xl shadow-black/5 transition-all hover:border-accent/20">
-            <div class="flex items-center justify-between mb-4">
-              <div class="flex items-center gap-2">
-                <div class="w-2 h-2 rounded-full bg-accent"></div>
-                <span class="text-[0.6rem] font-mono text-text-dim uppercase tracking-widest font-bold">cURL Terminal</span>
-              </div>
-              <button onclick="copyToClipboard(document.getElementById('code-curl').textContent, this)" class="text-[0.65rem] font-mono text-accent hover:underline uppercase tracking-tighter font-bold">Salin</button>
+          <div class="bg-surface border border-border rounded-xl p-5">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-[0.65rem] font-mono text-muted uppercase">cURL</span>
+              <button onclick="copyToClipboard(document.getElementById('code-curl').textContent, this)" class="text-[0.65rem] font-mono text-accent hover:underline">Copy</button>
             </div>
-            <div class="bg-bg border border-border-subtle p-5 rounded-2xl">
-<pre id="code-curl" class="font-mono text-[0.7rem] text-text-dim leading-relaxed overflow-x-auto whitespace-pre">curl -X POST https://[HOST]/api/device \
-  -H "x-api-key: YOUR_KEY" \
-  -H "Content-Type: json" \
-  -d '{"device_id":"DEV-01"}'</pre>
-            </div>
+<pre id="code-curl" class="font-mono text-[0.7rem] text-muted overflow-x-auto">curl -X POST https://${window.location.host}/api/device \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "device_id": "DEV-01",
+    "status": "ok"
+  }'</pre>
           </div>
 
           <!-- JavaScript -->
-          <div class="bg-surface border border-border-subtle rounded-3xl p-6 shadow-xl shadow-black/5 transition-all hover:border-accent/20">
-            <div class="flex items-center justify-between mb-4">
-              <div class="flex items-center gap-2">
-                <div class="w-2 h-2 rounded-full bg-accent2"></div>
-                <span class="text-[0.6rem] font-mono text-text-dim uppercase tracking-widest font-bold">JavaScript Fetch</span>
-              </div>
-              <button onclick="copyToClipboard(document.getElementById('code-js').textContent, this)" class="text-[0.65rem] font-mono text-accent hover:underline uppercase tracking-tighter font-bold">Salin</button>
+          <div class="bg-surface border border-border rounded-xl p-5">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-[0.65rem] font-mono text-muted uppercase">JavaScript</span>
+              <button onclick="copyToClipboard(document.getElementById('code-js').textContent, this)" class="text-[0.65rem] font-mono text-accent hover:underline">Copy</button>
             </div>
-            <div class="bg-bg border border-border-subtle p-5 rounded-2xl">
-<pre id="code-js" class="font-mono text-[0.7rem] text-text-dim leading-relaxed overflow-x-auto">fetch('https://[HOST]/api/device', {
+<pre id="code-js" class="font-mono text-[0.7rem] text-muted overflow-x-auto">fetch('https://[HOST]/api/device', {
   method: 'POST',
   headers: {
-    'x-api-key': 'KEY',
-    'Content-Type': 'json'
+    'x-api-key': 'YOUR_API_KEY',
+    'Content-Type': 'application/json'
   },
-  body: JSON.stringify({id:'DEV-01'})
+  body: JSON.stringify({
+    device_id: 'DEV-01',
+    status: 'ok'
+  })
 })</pre>
+          </div>
+
+          <!-- Python -->
+          <div class="bg-surface border border-border rounded-xl p-5">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-[0.65rem] font-mono text-muted uppercase">Python</span>
+              <button onclick="copyToClipboard(document.getElementById('code-py').textContent, this)" class="text-[0.65rem] font-mono text-accent hover:underline">Copy</button>
             </div>
+<pre id="code-py" class="font-mono text-[0.7rem] text-muted overflow-x-auto">import requests
+
+res = requests.post(
+  'https://[HOST]/api/device',
+  headers={
+    'x-api-key': 'YOUR_API_KEY',
+    'Content-Type': 'application/json'
+  },
+  json={
+    'device_id': 'DEV-01',
+    'status': 'ok'
+  }
+)</pre>
           </div>
         </div>
       </div>
