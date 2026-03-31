@@ -1,0 +1,161 @@
+<!-- pages/api.html -->
+<main class="flex-1 overflow-y-auto px-6 py-10 max-w-[1100px] mx-auto w-full">
+  
+  <header class="mb-12">
+    <div class="flex items-center gap-3 mb-4">
+      <div class="p-2 bg-accent/10 border border-accent/20 rounded-lg text-accent">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+        </svg>
+      </div>
+      <h1 class="text-[1.8rem] font-serif tracking-tight">API Documentation</h1>
+    </div>
+    <p class="text-muted max-w-[600px] font-light leading-relaxed">
+      Gunakan API kami untuk mengintegrasikan perangkat Anda secara otomatis ke sistem monitoring. 
+      Semua request memerlukan autentikasi melalui API Key.
+    </p>
+  </header>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
+    
+    <!-- LEFT CONTENT -->
+    <div class="lg:col-span-2 space-y-12">
+      
+      <!-- AUTHENTICATION -->
+      <section id="api-auth">
+        <h2 class="text-accent text-[0.85rem] font-mono uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+          <span class="w-1 h-1 bg-accent rounded-full"></span>
+          Authentication
+        </h2>
+        <div class="bg-surface border border-border p-6 rounded-xl">
+          <p class="text-[0.9rem] text-muted mb-4">
+            Sertakan API Key Anda di dalam header setiap request menggunakan field <code>x-api-key</code>.
+          </p>
+          <div class="bg-bg border border-border p-4 rounded-lg font-mono text-[0.8rem] text-muted flex items-center justify-between group">
+            <code>x-api-key: API_SECRET_KAMU</code>
+            <button onclick="copyToClipboard('API_SECRET_KAMU', this)" class="opacity-0 group-hover:opacity-100 transition-opacity text-accent hover:underline cursor-pointer">Copy</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ENDPOINTS -->
+      <section id="api-endpoints">
+        <h2 class="text-accent text-[0.85rem] font-mono uppercase tracking-[0.2em] mb-6 flex items-center gap-3">
+          <span class="w-1 h-1 bg-accent rounded-full"></span>
+          Endpoints
+        </h2>
+        
+        <div class="space-y-6">
+          <!-- DEVICE LOG -->
+          <div class="bg-surface border border-border overflow-hidden rounded-xl">
+            <div class="p-5 border-b border-border flex items-center justify-between bg-[rgba(200,245,102,0.02)]">
+              <div class="flex items-center gap-4">
+                <span class="px-3 py-1 bg-accent text-[#0d0d0d] font-mono text-[0.7rem] font-bold rounded uppercase">POST</span>
+                <code class="font-mono text-[0.85rem] text-[#f0ede6]">/api/device</code>
+              </div>
+              <span class="text-muted text-[0.75rem] font-mono">Submit Log Perangkat</span>
+            </div>
+            
+            <div class="p-6 space-y-6">
+              <div>
+                <h3 class="text-[0.85rem] font-mono text-muted uppercase mb-3 text-[0.7rem] tracking-wider">Request Body (JSON)</h3>
+                <div class="bg-bg border border-border p-4 rounded-lg">
+                  <table class="w-full text-[0.8rem] text-muted font-mono">
+                    <thead>
+                      <tr class="text-[0.65rem] border-b border-border text-muted">
+                        <th class="text-left py-2 font-normal">Field</th>
+                        <th class="text-left py-2 font-normal">Type</th>
+                        <th class="text-left py-2 font-normal">Description</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-border/50">
+                      <tr><td class="py-2 text-accent2">device_id</td><td class="py-2">string</td><td class="py-2">ID unik perangkat</td></tr>
+                      <tr><td class="py-2 text-accent2">status</td><td class="py-2">string</td><td class="py-2">ok, error, or warn</td></tr>
+                      <tr><td class="py-2 text-accent2">files_count</td><td class="py-2">number</td><td class="py-2">Jumlah file terenkripsi</td></tr>
+                      <tr><td class="py-2 text-accent2">version</td><td class="py-2">string</td><td class="py-2">Versi aplikasi device</td></tr>
+                      <tr><td class="py-2 text-accent2">ephemeral_pub</td><td class="py-2">string</td><td class="py-2">Public key sementara</td></tr>
+                      <tr><td class="py-2 text-accent2">encrypted_key</td><td class="py-2">string</td><td class="py-2">Key yang terenkripsi</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div>
+                <h3 class="text-[0.85rem] font-mono text-muted uppercase mb-3 text-[0.7rem] tracking-wider">Response</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div class="bg-bg border border-border p-3 rounded-lg flex items-center gap-3">
+                    <span class="w-2 h-2 rounded-full bg-ok"></span>
+                    <span class="font-mono text-[0.75rem]">200 OK — Success</span>
+                  </div>
+                  <div class="bg-bg border border-border p-3 rounded-lg flex items-center gap-3">
+                    <span class="w-2 h-2 rounded-full bg-danger"></span>
+                    <span class="font-mono text-[0.75rem]">401 Unauthorized</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- RIGHT SIDEBAR (CODE EXAMPLES) -->
+    <div class="space-y-8">
+      <div class="sticky top-20">
+        <h2 class="text-muted text-[0.75rem] font-mono uppercase tracking-[0.2em] mb-4">Example Requests</h2>
+        
+        <div class="space-y-4">
+          <!-- CURL -->
+          <div class="bg-surface border border-border rounded-xl p-5">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-[0.65rem] font-mono text-muted uppercase">cURL</span>
+              <button onclick="copyToClipboard(document.getElementById('code-curl').textContent, this)" class="text-[0.65rem] font-mono text-accent hover:underline">Copy</button>
+            </div>
+<pre id="code-curl" class="font-mono text-[0.7rem] text-muted overflow-x-auto">curl -X POST /api/device \
+  -H "x-api-key: YOUR_KEY" \
+  -d '{
+    "device_id": "DEV-01",
+    "status": "ok"
+  }'</pre>
+          </div>
+
+          <!-- JavaScript -->
+          <div class="bg-surface border border-border rounded-xl p-5">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-[0.65rem] font-mono text-muted uppercase">JavaScript</span>
+              <button onclick="copyToClipboard(document.getElementById('code-js').textContent, this)" class="text-[0.65rem] font-mono text-accent hover:underline">Copy</button>
+            </div>
+<pre id="code-js" class="font-mono text-[0.7rem] text-muted overflow-x-auto">fetch('/api/device', {
+  method: 'POST',
+  headers: {
+    'x-api-key': 'YOUR_KEY',
+    'Content-Type': 'json'
+  },
+  body: JSON.stringify({
+    device_id: 'DEV-01',
+    status: 'ok'
+  })
+})</pre>
+          </div>
+
+          <!-- Python -->
+          <div class="bg-surface border border-border rounded-xl p-5">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-[0.65rem] font-mono text-muted uppercase">Python</span>
+              <button onclick="copyToClipboard(document.getElementById('code-py').textContent, this)" class="text-[0.65rem] font-mono text-accent hover:underline">Copy</button>
+            </div>
+<pre id="code-py" class="font-mono text-[0.7rem] text-muted overflow-x-auto">import requests
+
+res = requests.post(
+  '/api/device',
+  headers={'x-api-key': 'KEY'},
+  json={'device_id': 'DEV-01'}
+)</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>

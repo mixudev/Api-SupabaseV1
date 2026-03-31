@@ -10,6 +10,7 @@ const PARTIALS = [
   { url: 'partials/modal.html',   target: 'modal-details-partial' },
   { url: 'pages/dashboard.html',  target: 'page-dashboard' },
   { url: 'pages/keyvault.html',   target: 'page-keyvault' },
+  { url: 'pages/api.html',        target: 'page-api' },
 ];
 
 async function loadPartials() {
