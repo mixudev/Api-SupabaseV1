@@ -31,9 +31,12 @@
           <p class="text-[0.9rem] text-muted mb-4">
             Sertakan API Key Anda di dalam header setiap request menggunakan field <code>x-api-key</code>.
           </p>
-          <div class="bg-bg border border-border p-4 rounded-lg font-mono text-[0.8rem] text-muted flex items-center justify-between group">
-            <code>x-api-key: API_SECRET_KAMU</code>
-            <button onclick="copyToClipboard('API_SECRET_KAMU', this)" class="opacity-0 group-hover:opacity-100 transition-opacity text-accent hover:underline cursor-pointer">Copy</button>
+          <div class="bg-bg border border-border p-4 rounded-lg font-mono text-[0.8rem] text-muted flex flex-col sm:flex-row items-center justify-between gap-4 group">
+            <span id="api-key-display" class="truncate max-w-full">x-api-key: ••••••••••••••••••••••••••••••••</span>
+            <button onclick="handleRevealKey(this)" 
+              class="whitespace-nowrap px-4 py-2 border border-accent/30 text-accent text-[0.7rem] rounded-lg hover:bg-accent/10 transition-all cursor-pointer">
+              Reveal & Copy Key
+            </button>
           </div>
         </div>
       </section>
@@ -112,8 +115,9 @@
               <span class="text-[0.65rem] font-mono text-muted uppercase">cURL</span>
               <button onclick="copyToClipboard(document.getElementById('code-curl').textContent, this)" class="text-[0.65rem] font-mono text-accent hover:underline">Copy</button>
             </div>
-<pre id="code-curl" class="font-mono text-[0.7rem] text-muted overflow-x-auto">curl -X POST /api/device \
-  -H "x-api-key: YOUR_KEY" \
+<pre id="code-curl" class="font-mono text-[0.7rem] text-muted overflow-x-auto">curl -X POST https://${window.location.host}/api/device \
+  -H "x-api-key: YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
   -d '{
     "device_id": "DEV-01",
     "status": "ok"
@@ -129,8 +133,8 @@
 <pre id="code-js" class="font-mono text-[0.7rem] text-muted overflow-x-auto">fetch('/api/device', {
   method: 'POST',
   headers: {
-    'x-api-key': 'YOUR_KEY',
-    'Content-Type': 'json'
+    'x-api-key': 'YOUR_API_KEY',
+    'Content-Type': 'application/json'
   },
   body: JSON.stringify({
     device_id: 'DEV-01',
@@ -148,9 +152,15 @@
 <pre id="code-py" class="font-mono text-[0.7rem] text-muted overflow-x-auto">import requests
 
 res = requests.post(
-  '/api/device',
-  headers={'x-api-key': 'KEY'},
-  json={'device_id': 'DEV-01'}
+  'https://${window.location.host}/api/device',
+  headers={
+    'x-api-key': 'YOUR_API_KEY',
+    'Content-Type': 'application/json'
+  },
+  json={
+    'device_id': 'DEV-01',
+    'status': 'ok'
+  }
 )</pre>
           </div>
         </div>

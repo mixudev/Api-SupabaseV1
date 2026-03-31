@@ -17,7 +17,6 @@ let allData = [];
 //  INIT
 // ═══════════════════════════════════════════
 document.addEventListener('partials:ready', () => {
-  initApiBox();
   bindPasswordEnter();
   checkSession();
 });
@@ -328,25 +327,49 @@ function copyToClipboard(text, btn) {
 }
 
 // ═══════════════════════════════════════════
-//  API BOX
+//  SECURE API KEY
 // ═══════════════════════════════════════════
-function initApiBox() {
-  const origin = window.location.origin;
-  const urlEl  = document.getElementById('api-endpoint-url');
-  const exEl   = document.getElementById('api-example-box');
-  if (urlEl) urlEl.textContent = origin;
-  if (exEl) exEl.textContent =
-`// Contoh request dari device / script kamu:
+async function handleRevealKey(btn) {
+  const display = document.getElementById('api-key-display');
+  if (!display) return;
 
-curl -X POST ${origin}/api/device \\
-  -H "Content-Type: application/json" \\
-  -H "x-api-key: API_SECRET_KAMU" \\
-  -d '{
-    "device_id":     "DEV-001",
-    "ephemeral_pub": "04abc123...",
-    "encrypted_key": "enc_xyz789...",
-    "version":       "1.0.0",
-    "status":        "ok",
-    "files_count":   2
-  }'`;
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) {
+    alert('Sesi habis, silakan login kembali.');
+    return;
+  }
+
+  const originalText = btn.textContent;
+  btn.textContent = 'Fetching...';
+  btn.disabled    = true;
+
+  try {
+    const res = await fetch('/api/get-key', {
+      headers: { 'Authorization': `Bearer ${session.access_token}` }
+    });
+    const data = await res.json();
+    
+    if (data.error) throw new Error(data.error);
+
+    const key = data.key;
+    display.innerHTML = `x-api-key: <code class="text-accent2 selection:bg-accent2/20 font-mono text-[0.8rem]">${key}</code>`;
+    
+    // Copy to clipboard
+    navigator.clipboard.writeText(key).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('text-ok');
+      setTimeout(() => {
+        btn.textContent = originalText;
+        btn.classList.remove('text-ok');
+        btn.disabled = false;
+      }, 2000);
+    });
+
+  } catch (err) {
+    console.error('Failed to get API Key:', err);
+    alert('Gagal mengambil API Key: ' + err.message);
+    btn.textContent = originalText;
+    btn.disabled    = false;
+  }
 }
+
