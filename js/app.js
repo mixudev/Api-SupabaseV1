@@ -421,3 +421,22 @@ async function handleRevealKey(btn) {
   }
 }
 
+// ═══════════════════════════════════════════
+//  DOCS PAGE API TABS
+// ═══════════════════════════════════════════
+window.switchCodeTab = function(tab) {
+  document.querySelectorAll('.code-req-tab').forEach(t => {
+    t.classList.remove('active', 'text-[#f0ede6]', 'bg-[#1e2a4a]/40');
+    t.classList.add('text-muted');
+  });
+  const t = document.getElementById('tab-code-' + tab);
+  if (t) {
+    t.classList.remove('text-muted');
+    t.classList.add('active', 'text-[#f0ede6]', 'bg-[#1e2a4a]/40');
+  }
+
+  document.querySelectorAll('.code-content').forEach(c => c.classList.add('hidden'));
+  const target = document.getElementById('code-block-' + tab);
+  if (target) target.classList.remove('hidden');
+};
+
