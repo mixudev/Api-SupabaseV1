@@ -34,6 +34,17 @@
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&family=Geist:wght@300;400;500;600&display=swap" rel="stylesheet" />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="css/animations.css" />
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    /* Custom Scrollbar Elegant Minimalist */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 4px; border: 1px solid transparent; background-clip: content-box; }
+    ::-webkit-scrollbar-thumb:hover { background-color: #444; }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #1e2a4a; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #66d4f5; }
+  </style>
 </head>
 <body class="bg-bg text-[#f0ede6] font-sans font-light min-h-screen">
 
@@ -48,6 +59,7 @@
     <div id="page-dashboard" class="page hidden"></div>
     <div id="page-keyvault" class="page hidden"></div>
     <div id="page-api" class="page hidden"></div>
+    <div id="page-docs" class="page hidden"></div>
   </div>
 
   <!-- MODAL -->

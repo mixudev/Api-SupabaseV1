@@ -11,6 +11,7 @@ const PARTIALS = [
   { url: 'pages/dashboard.html',  target: 'page-dashboard' },
   { url: 'pages/keyvault.html',   target: 'page-keyvault' },
   { url: 'pages/api.html',        target: 'page-api' },
+  { url: 'pages/docs.html',       target: 'page-docs' },
 ];
 
 async function loadPartials() {

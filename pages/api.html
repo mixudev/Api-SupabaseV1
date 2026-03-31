@@ -172,6 +172,8 @@ res = requests.post(
 
 <script>
   document.querySelectorAll('.host-name').forEach(el => {
-    el.textContent = window.location.host;
+    let host = window.location.host;
+    if (!host || host === '') host = 'YOUR-VERCEL-DOMAIN.vercel.app';
+    el.textContent = host;
   });
 </script>
